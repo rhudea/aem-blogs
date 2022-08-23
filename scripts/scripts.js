@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Adobe. All rights reserved.
+ * Copyright 2022 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -16,130 +16,73 @@
  * @param {Object} data additional data for RUM sample
  */
 
-const RUM_GENERATION = 'blog-gen-7-highrate';
+const PRODUCTION_DOMAINS = ['blog.alexforbes.com'];
 
-const PRODUCTION_DOMAINS = ['blog.adobe.com'];
+/**
+ * log RUM if part of the sample.
+ * @param {string} checkpoint identifies the checkpoint in funnel
+ * @param {Object} data additional data for RUM sample
+ */
 
-export function sampleRUM(checkpoint, data = {}) {
+ export function sampleRUM(checkpoint, data = {}) {
+  sampleRUM.defer = sampleRUM.defer || [];
+  const defer = (fnname) => {
+    sampleRUM[fnname] = sampleRUM[fnname]
+      || ((...args) => sampleRUM.defer.push({ fnname, args }));
+  };
+  sampleRUM.drain = sampleRUM.drain
+    || ((dfnname, fn) => {
+      sampleRUM[dfnname] = fn;
+      sampleRUM.defer
+        .filter(({ fnname }) => dfnname === fnname)
+        .forEach(({ fnname, args }) => sampleRUM[fnname](...args));
+    });
+  sampleRUM.on = (chkpnt, fn) => { sampleRUM.cases[chkpnt] = fn; };
+  defer('observe');
+  defer('cwv');
   try {
     window.hlx = window.hlx || {};
     if (!window.hlx.rum) {
       const usp = new URLSearchParams(window.location.search);
-      const weight = (usp.get('rum') === 'on') ? 1 : 10; // with parameter, weight is 1. Defaults to 100.
+      const weight = (usp.get('rum') === 'on') ? 1 : 100; // with parameter, weight is 1. Defaults to 100.
       // eslint-disable-next-line no-bitwise
       const hashCode = (s) => s.split('').reduce((a, b) => (((a << 5) - a) + b.charCodeAt(0)) | 0, 0);
       const id = `${hashCode(window.location.href)}-${new Date().getTime()}-${Math.random().toString(16).substr(2, 14)}`;
       const random = Math.random();
       const isSelected = (random * weight < 1);
       // eslint-disable-next-line object-curly-newline
-      window.hlx.rum = { weight, id, random, isSelected };
+      window.hlx.rum = { weight, id, random, isSelected, sampleRUM };
     }
-    const { random, weight, id } = window.hlx.rum;
-    if (random && (random * weight < 1)) {
-      const sendPing = () => {
-        // eslint-disable-next-line object-curly-newline, max-len
+    const { weight, id } = window.hlx.rum;
+    if (window.hlx && window.hlx.rum && window.hlx.rum.isSelected) {
+      const sendPing = (pdata = data) => {
+        // eslint-disable-next-line object-curly-newline, max-len, no-use-before-define
         const body = JSON.stringify({ weight, id, referer: window.location.href, generation: RUM_GENERATION, checkpoint, ...data });
         const url = `https://rum.hlx.page/.rum/${weight}`;
         // eslint-disable-next-line no-unused-expressions
         navigator.sendBeacon(url, body);
+        // eslint-disable-next-line no-console
+        console.debug(`ping:${checkpoint}`, pdata);
       };
-      sendPing();
-      // special case CWV
-      if (checkpoint === 'cwv') {
-        // eslint-disable-next-line import/no-unresolved
-        import('./web-vitals-module-2-1-2.js').then((mod) => {
-          const storeCWV = (measurement) => {
-            data.cwv = {};
-            data.cwv[measurement.name] = measurement.value;
-            sendPing();
-          };
-          mod.getCLS(storeCWV);
-          mod.getFID(storeCWV);
-          mod.getLCP(storeCWV);
-        });
-      }
+      sampleRUM.cases = sampleRUM.cases || {
+        cwv: () => sampleRUM.cwv(data) || true,
+        lazy: () => {
+          // use classic script to avoid CORS issues
+          const script = document.createElement('script');
+          script.src = 'https://rum.hlx.page/.rum/@adobe/helix-rum-enhancer@^1/src/index.js';
+          document.head.appendChild(script);
+          sendPing(data);
+          return true;
+        },
+      };
+      sendPing(data);
+      if (sampleRUM.cases[checkpoint]) { sampleRUM.cases[checkpoint](); }
     }
-  } catch (e) {
+  } catch (error) {
     // something went wrong
   }
 }
 
-sampleRUM.mediaobserver = (window.IntersectionObserver) ? new IntersectionObserver((entries) => {
-  entries
-    .filter((entry) => entry.isIntersecting)
-    .forEach((entry) => {
-      sampleRUM.mediaobserver.unobserve(entry.target); // observe only once
-      const target = sampleRUM.targetselector(entry.target);
-      const source = sampleRUM.sourceselector(entry.target);
-      sampleRUM('viewmedia', { target, source });
-    });
-}, { threshold: 0.25 }) : { observe: () => { } };
-
-sampleRUM.blockobserver = (window.IntersectionObserver) ? new IntersectionObserver((entries) => {
-  entries
-    .filter((entry) => entry.isIntersecting)
-    .forEach((entry) => {
-      sampleRUM.blockobserver.unobserve(entry.target); // observe only once
-      const target = sampleRUM.targetselector(entry.target);
-      const source = sampleRUM.sourceselector(entry.target);
-      sampleRUM('viewblock', { target, source });
-    });
-}, { threshold: 0.25 }) : { observe: () => { } };
-
-sampleRUM.observe = ((elements) => {
-  elements.forEach((element) => {
-    if (element.tagName.toLowerCase() === 'img'
-      || element.tagName.toLowerCase() === 'video'
-      || element.tagName.toLowerCase() === 'audio'
-      || element.tagName.toLowerCase() === 'iframe') {
-      sampleRUM.mediaobserver.observe(element);
-    } else {
-      sampleRUM.blockobserver.observe(element);
-    }
-  });
-});
-
-sampleRUM.sourceselector = (element) => {
-  if (element === document.body || element === document.documentElement || !element) {
-    return undefined;
-  }
-  if (element.id) {
-    return `#${element.id}`;
-  }
-  if (element.getAttribute('data-block-name')) {
-    return `.${element.getAttribute('data-block-name')}`;
-  }
-  return sampleRUM.sourceselector(element.parentElement);
-};
-
-sampleRUM.targetselector = (element) => {
-  let value = element.getAttribute('href') || element.currentSrc || element.getAttribute('src');
-  if (value && value.startsWith('https://')) {
-    // resolve relative links
-    value = new URL(value, window.location).href;
-  }
-  return value;
-};
-
-sampleRUM('top');
-window.addEventListener('load', () => sampleRUM('load'));
-document.addEventListener('click', (event) => {
-  sampleRUM('click', {
-    target: sampleRUM.targetselector(event.target),
-    source: sampleRUM.sourceselector(event.target),
-  });
-});
-
-const olderror = window.onerror;
-window.onerror = (event, source, line) => {
-  sampleRUM('error', { source, target: line });
-  // keep the old error handler around
-  if (typeof olderror === 'function') {
-    olderror(event, source, line);
-  } else {
-    throw new Error(event);
-  }
-};
 
 /**
  * Loads a CSS file.
@@ -884,8 +827,6 @@ export function decorateMain(main) {
   wrapSections(main.querySelectorAll(':scope > div'));
   decorateBlocks(main);
 
-  sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
-  window.setTimeout(() => sampleRUM.observe(main.querySelectorAll('picture > img')), 1000);
 }
 
 /**
@@ -1003,7 +944,9 @@ async function loadLazy() {
   const main = document.querySelector('main');
 
   // post LCP actions go here
-  sampleRUM('lcp');
+  sampleRUM('lazy');
+  sampleRUM.observe(main.querySelectorAll('div[data-block-name]'));
+  sampleRUM.observe(main.querySelectorAll('picture > img'));
 
   /* load gnav */
   const header = document.querySelector('header');
