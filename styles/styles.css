@@ -1,22 +1,3 @@
-/* above the fold CSS goes here */
-
-/* Size adjust to better match Adobe Clean */
-@font-face {
-  font-family: 'Trebuchet MS';
-  size-adjust: 95%;
-  src: local('Trebuchet MS'),
-       local('TrebuchetMS');
-       font-weight: 700;
-}
-
-@font-face {
-  font-family: 'Trebuchet MS';
-  size-adjust: 87%;
-  src: local('Trebuchet MS'),
-       local('TrebuchetMS');
-       font-weight: 400;
-}
-
 /* default content */
 :root {
   --color-white: #FFF;
@@ -38,7 +19,7 @@
   /* body */
   --body-background-color: var(--color-white);
   --body-alt-background-color: var(--color-gray-600);
-  --body-font-family: 'adobe-clean', 'Trebuchet MS', sans-serif;
+  --body-font-family: "Source Sans Pro",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
   --body-font-weight: 300;
   --body-color: var(--color-black);
   --body-line-height: 1.5;
