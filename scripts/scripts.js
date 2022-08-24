@@ -156,6 +156,29 @@ export function getLanguage() {
   return language;
 }
 
+export function getLocale() {
+  const lang = getLanguage();
+  return LANG_LOCALE[lang];
+}
+
+function getDateLocale() {
+  let dateLocale = getLanguage();
+  if (dateLocale === LANG.EN) {
+    dateLocale = 'en-US'; // default to US date format
+  }
+  if (dateLocale === LANG.BR) {
+    dateLocale = 'pt-BR';
+  }
+  if (dateLocale === LANG.JP) {
+    dateLocale = 'ja-JP';
+  }
+  const pageName = window.location.pathname.split('/').pop().split('.')[0];
+  if (pageName === 'uk' || pageName === 'apac') {
+    dateLocale = 'en-UK'; // special handling for UK and APAC landing pages
+  }
+  return dateLocale;
+}
+
 /**
  * Returns the language dependent root path
  * @returns {string} The computed root path
@@ -164,6 +187,7 @@ export function getRootPath() {
   const loc = getLanguage();
   return `/${loc}`;
 }
+
 
 /**
  * Retrieves the content of a metadata tag. Multivalued metadata are returned
@@ -177,6 +201,58 @@ export function getMetadata(name, asArray = false) {
   const meta = [...document.head.querySelectorAll(`meta[${attr}="${name}"]`)].map((el) => el.content);
 
   return asArray ? meta : meta.join(', ');
+}
+
+/**
+ * Get the current Helix environment
+ * @returns {Object} the env object
+ */
+ export function getHelixEnv() {
+  let envName = sessionStorage.getItem('helix-env');
+  if (!envName) envName = 'prod';
+  const envs = {
+    dev: {
+      ims: 'stg1',
+      subdomain: 'dev02.',
+      adobeIO: 'cc-collab-stage.adobe.io',
+      adminconsole: 'stage.adminconsole.adobe.com',
+      account: 'stage.account.adobe.com',
+      target: false,
+    },
+    stage: {
+      ims: 'stg1',
+      subdomain: 'stage.',
+      adobeIO: 'cc-collab-stage.adobe.io',
+      adminconsole: 'stage.adminconsole.adobe.com',
+      account: 'stage.account.adobe.com',
+      target: false,
+    },
+    prod: {
+      ims: 'prod',
+      subdomain: '',
+      adobeIO: 'cc-collab.adobe.io',
+      adminconsole: 'adminconsole.adobe.com',
+      account: 'account.adobe.com',
+      target: true,
+    },
+  };
+  const env = envs[envName];
+
+  const overrideItem = sessionStorage.getItem('helix-env-overrides');
+  if (overrideItem) {
+    const overrides = JSON.parse(overrideItem);
+    const keys = Object.keys(overrides);
+    env.overrides = keys;
+
+    keys.forEach((value) => {
+      env[value] = overrides[value];
+    });
+  }
+
+  if (env) {
+    env.name = envName;
+  }
+  return env;
 }
 
 
@@ -966,7 +1042,7 @@ async function loadLazy() {
 
   loadBlocks(main);
   loadCSS('/styles/lazy-styles.css');
-  addFavIcon('/styles/favicon.svg');
+  addFavIcon('/icons/favicon.svg');
 
   if (window.location.pathname.endsWith('/')) {
     // homepage, add query index to publish dependencies
