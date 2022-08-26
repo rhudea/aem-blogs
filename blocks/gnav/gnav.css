@@ -4,11 +4,12 @@ header .gnav {
 
 .gnav-wrapper {
   position: relative;
-  background: #FFF;
+  background: linear-gradient(0deg, rgb(3, 27, 29) 0%, rgb(21, 105, 121) 100%) 0% 0% no-repeat padding-box padding-box transparent;
   width: 100%;
   height: 64px;
   display: flex;
-  border-bottom: 1px solid #124e57;
+  opacity: .85;
+  /* border-bottom: 1px solid #124e57; */
 }
 
 .gnav {
@@ -78,7 +79,7 @@ button.gnav-toggle:after {
   grid-area: brand;
   display: flex;
   align-items: center;
-  color: #124e57;
+  color: #ffffff;
   font-size: 18px;
   line-height: 18px;
   font-weight: 700;
@@ -132,7 +133,7 @@ button.gnav-toggle:after {
   justify-content: space-between;
   align-items: center;
   padding: 20px 12px;
-  color: rgb(23, 79, 88);
+  color: #ffffff;
   transition: background-color .1s ease;
 }
 
@@ -152,12 +153,12 @@ button.gnav-toggle:after {
   right: 20px;
   bottom: 0;
   display: block;
-  border-bottom: 1px solid #D1D1D1;
+  border-bottom: 0px solid #D1D1D1;
 }
 
 .gnav-navitem > a:hover {
-  background-color: #ffffff;
-  color:#F15a22;
+  background-color: #f15a22;
+  color:#ffffff;
 }
 
 .gnav-navitem > a {
@@ -173,7 +174,7 @@ button.gnav-toggle:after {
   border-bottom-width: 1px;
   border-right-width: 1px;
   border-style: solid;
-  border-color: #2c2c2c;
+  border-color: #ffffff;
   transform-origin: 75% 75%;
   transform: rotate(45deg);
   transition: transform .1s ease;
@@ -189,7 +190,7 @@ button.gnav-toggle:after {
 .gnav-navitem-menu {
   display: none;
   padding: 14px 0;
-  background-color: #ffffff;
+  background-color: rgb(18, 78, 87);
 }
 
 .gnav-navitem.has-Menu.is-Open {
@@ -212,15 +213,15 @@ button.gnav-toggle:after {
 }
 
 .gnav-navitem-menu a:hover {
-  color: #f69521;
-  background-color: #ffffff;
+  color: #ffffff;
+  background-color: #f15a22;
 }
 
 .gnav-promo {
   width: 260px;
   border: 1px solid #15808d;
   /* border-radius: 10px; */
-  background: #FFF;
+  background: linear-gradient(0deg, rgb(255, 255, 255) 100%, rgb(255, 255, 255) 100%) 0% 0% no-repeat padding-box padding-box #ffffff;
   margin: 12px 0px 0px 36px;
 }
 
@@ -274,10 +275,11 @@ button.gnav-toggle:after {
 .gnav-search button svg {
   width: 20px;
   height: 20px;
+  fill: #ffffff;
 }
 
 .gnav-search .gnav-search-button:hover {
-  fill: #124e57;
+  fill: #ffffff;
 }
 
 .gnav-search.is-Open .gnav-search-button:after {
@@ -286,6 +288,7 @@ button.gnav-toggle:after {
   /* line-height: 1; */
   font-size: 24px;
   padding: 1px 0 0 0;
+  color: #ffffff;
 }
 
 .gnav-search.is-Open .gnav-search-button svg {
@@ -294,8 +297,8 @@ button.gnav-toggle:after {
 
 .gnav-search-bar {
   display: none;
-  background: #FFF;
-  border-bottom: 1px solid #EAEAEA;
+  background: #124e57;
+  border-bottom: 0px solid #EAEAEA;
   padding-bottom: 20px;
 }
 
@@ -316,7 +319,7 @@ button.gnav-toggle:after {
   display: grid;
   grid-template-columns: 1fr auto;
   grid-gap: 20px;
-  padding: 0 12px;
+  padding: 20px 12px;
   box-sizing: border-box;
 }
 
@@ -324,7 +327,7 @@ button.gnav-toggle:after {
   width: 20px;
   height: 20px;
   position: absolute;
-  top: 6px;
+  top: 25px;
   left: 18px;
   fill: rgb(110, 110, 110);
   transition: fill 130ms ease-in-out;
@@ -365,7 +368,7 @@ button.gnav-toggle:after {
 }
 
 .gnav-search-field .gnav-search-input:focus {
-  border-color: rgb(241, 91, 37);
+  border-color: rgb(0, 0, 0);
 }
 
 .gnav-search-input::placeholder {
@@ -622,7 +625,7 @@ button.gnav-toggle:after {
     display: grid;
     position: absolute;
     top: 100%;
-    border-top: 1px solid #124e57;
+    border-top: 0px solid #124e57;
     box-shadow: 0px 3px 3px rgb(23 79 88 / 80%);
   }
 
