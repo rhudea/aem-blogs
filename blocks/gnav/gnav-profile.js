@@ -80,9 +80,3 @@ function decorateProfileMenu(blockEl, profileEl, profiles, toggle) {
   profileMenu.append(profileHeader, profileActions);
   profileEl.append(profileButton, profileMenu);
 }
-
-export default async function getProfile(blockEl, profileEl, toggle, ioResp) {
-  const profiles = {};
-  profiles.io = await ioResp.json();
-  decorateProfileMenu(blockEl, profileEl, profiles, toggle);
-}

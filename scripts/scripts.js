@@ -212,27 +212,12 @@ export function getMetadata(name, asArray = false) {
   if (!envName) envName = 'prod';
   const envs = {
     dev: {
-      ims: 'stg1',
-      subdomain: 'dev02.',
-      adobeIO: 'cc-collab-stage.adobe.io',
-      adminconsole: 'stage.adminconsole.adobe.com',
-      account: 'stage.account.adobe.com',
       target: false,
     },
     stage: {
-      ims: 'stg1',
-      subdomain: 'stage.',
-      adobeIO: 'cc-collab-stage.adobe.io',
-      adminconsole: 'stage.adminconsole.adobe.com',
-      account: 'stage.account.adobe.com',
       target: false,
     },
     prod: {
-      ims: 'prod',
-      subdomain: '',
-      adobeIO: 'cc-collab.adobe.io',
-      adminconsole: 'adminconsole.adobe.com',
-      account: 'account.adobe.com',
       target: true,
     },
   };
