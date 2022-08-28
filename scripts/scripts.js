@@ -730,16 +730,10 @@ export async function loadBlock(block, eager = false) {
   if (!(block.getAttribute('data-block-status') === 'loading' || block.getAttribute('data-block-status') === 'loaded')) {
     block.setAttribute('data-block-status', 'loading');
     const blockName = block.getAttribute('data-block-name');
-    const { list } = window.milo?.libs?.blocks;
-    // Determine if block should be loaded from milo libs
-    const isMiloBlock = !!(list && list.includes(blockName));
-    const base = isMiloBlock ? window.milo.libs.base : '';
+    const base = '';
     try {
       const cssLoaded = new Promise((resolve) => {
         loadCSS(`${base}/blocks/${blockName}/${blockName}.css`, resolve);
-        if (isMiloBlock) {
-          loadCSS(`${base}/styles/variables.css`, resolve);
-        }
       });
       const decorationComplete = new Promise((resolve) => {
         (async () => {
@@ -959,35 +953,12 @@ export function loadScript(url, callback, type) {
   return script;
 }
 
-export async function loadLibs() {
-  window.milo = window.milo || {};
-  if (!window.milo.libs) {
-    let domain = `https://${PRODUCTION_DOMAINS[0]}`;
-    const isProd = window.location.hostname === PRODUCTION_DOMAINS[0];
-    if (!isProd) {
-      const milolibs = new URLSearchParams(window.location.search).get('milolibs');
-      const libStore = milolibs || 'main';
-      domain = libStore === 'local' ? 'http://localhost:6456' : `https://${libStore}.milo.pink`;
-    }
-    window.milo.libs = { base: `${domain}/libs` };
-    try {
-      const { default: list } = await import(`${window.milo.libs.base}/blocks/list.js`);
-      window.milo.libs.blocks = { list };
-    } catch (e) {
-      window.milo.libs.blocks = {};
-      // eslint-disable-next-line no-console
-      console.log('Couldn\'t load libs list');
-    }
-  }
-}
-
 /**
  * Loads everything needed to get to LCP.
  */
 async function loadEager() {
   const main = document.querySelector('main');
   if (main) {
-    await loadLibs();
     decorateMain(main);
     const lcpBlocks = ['featured-article', 'article-header'];
     const block = document.querySelector('.block');
