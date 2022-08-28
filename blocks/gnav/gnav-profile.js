@@ -72,7 +72,6 @@ function decorateProfileMenu(blockEl, profileEl, profiles, toggle) {
   const signOutLink = blockEl.querySelector('div > div > p:nth-child(5) a');
   signOutLink.addEventListener('click', (e) => {
     e.preventDefault();
-    window.adobeIMS.signOut();
   });
   const signOut = createTag('li', { class: 'gnav-profile-action' }, signOutLink);
   profileActions.append(signOut);
@@ -84,7 +83,6 @@ function decorateProfileMenu(blockEl, profileEl, profiles, toggle) {
 
 export default async function getProfile(blockEl, profileEl, toggle, ioResp) {
   const profiles = {};
-  profiles.ims = await window.adobeIMS.getProfile();
   profiles.io = await ioResp.json();
   decorateProfileMenu(blockEl, profileEl, profiles, toggle);
 }
