@@ -84,11 +84,14 @@ class Gnav {
     const brand = brandBlock.querySelector('a');
 
     const { className } = brandBlock;
-    const classNameClipped = className.slice(0, -1);
-    const classNames = classNameClipped.split('--');
-    brand.className = classNames.join(' ');
+    brand.className = className;
     if (brand.classList.contains('with-logo')) {
-      brand.insertAdjacentHTML('afterbegin', BRAND_IMG);
+      brand.innerHTML = '';
+      const brandImg = document.createElement('img');
+      brandImg.setAttribute('alt', 'AlexForbes');
+      brandImg.setAttribute('src', '/blocks/gnav/alexforbes-logo-white.svg');
+      brandImg.setAttribute('loading', 'lazy');
+      brand.appendChild(brandImg);
     }
     return brand;
   }

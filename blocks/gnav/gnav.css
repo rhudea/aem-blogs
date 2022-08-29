@@ -85,6 +85,10 @@ button.gnav-toggle:after {
   font-weight: 700;
 }
 
+.gnav .gnav-brand.with-logo>img {
+  height: 70%;
+}
+
 .gnav .gnav-logo {
   grid-area: logo;
   display: flex;
