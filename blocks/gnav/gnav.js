@@ -1,9 +1,7 @@
 import {
-  loadScript,
   getHelixEnv,
   debug,
   makeLinksRelative,
-  getLocale,
 } from '../../scripts/scripts.js';
 import { createTag } from '../block-helpers.js';
 

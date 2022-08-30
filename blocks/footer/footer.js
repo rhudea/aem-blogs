@@ -1,11 +1,8 @@
 import {
-  fetchPlaceholders,
   debug,
-  makeLinksRelative,
 } from '../../scripts/scripts.js';
 import { createTag } from '../block-helpers.js';
 
-const GLOBE_IMG = '<img class="footer-region-img" loading="lazy" src="/blocks/footer/globe.svg">';
 const ADCHOICE_IMG = '<img class="footer-link-img" loading="lazy" src="/blocks/footer/adchoices-small.svg">';
 
 class Footer {
@@ -27,14 +24,6 @@ class Footer {
     const infoRow = createTag('div', { class: 'footer-info' });
     const infoColumnLeft = createTag('div', { class: 'footer-info-column' });
     const infoColumnRight = createTag('div', { class: 'footer-info-column' });
-
-    const region = await this.decorateRegion();
-    if (region) {
-      infoColumnLeft.append(region);
-      infoRow.classList.add('has-region');
-    }
-
-    makeLinksRelative(region);
 
     const social = this.decorateSocial();
     if (social) {
@@ -105,57 +94,6 @@ class Footer {
     return navGrid;
   }
 
-  decorateRegion = async () => {
-    const region = this.body.querySelector('.region-selector > div');
-    if (!region) return null;
-    const placeholders = await fetchPlaceholders();
-    // build region selector container
-    const regionContainer = createTag('div', { class: 'footer-region' });
-    // build region selector button
-    const regionButton = createTag('a', {
-      class: 'footer-region-button',
-      id: 'region-button',
-      'aria-expanded': false,
-      'aria-haspopup': true,
-      'aria-label': placeholders['change-language'],
-      role: 'button',
-      tabindex: 0,
-    });
-    regionButton.addEventListener('click', this.toggleMenu);
-    regionButton.addEventListener('focus', () => {
-      window.addEventListener('keydown', this.toggleOnKey);
-    });
-    regionButton.addEventListener('blur', () => {
-      window.removeEventListener('keydown', this.toggleOnKey);
-    });
-    const regionText = createTag('span', { class: 'footer-region-text' });
-    regionText.textContent = placeholders['change-language'];
-    regionButton.insertAdjacentHTML('afterbegin', GLOBE_IMG);
-    regionButton.append(regionText);
-    regionContainer.append(regionButton);
-    // build region selector options
-    const regionOptions = createTag('ul', {
-      class: 'footer-region-options',
-      'aria-labelledby': 'region-button',
-      role: 'menu',
-    });
-    const regionLinks = region.querySelectorAll('a');
-    // populate region selector options
-    regionLinks.forEach((link) => {
-      const selected = link.parentNode.nodeName === 'STRONG';
-      const options = { class: 'footer-region-option' };
-      if (selected) {
-        options.class += ' footer-region-selected';
-        options['aria-current'] = 'page';
-      }
-      const li = createTag('li', options);
-      li.append(link);
-      regionOptions.append(li);
-    });
-    regionContainer.append(regionOptions);
-    return regionContainer;
-  }
-
   decorateSocial = () => {
     const socialEl = this.body.querySelector('.social > div');
     if (!socialEl) return null;
@@ -220,10 +158,6 @@ class Footer {
   }
 
   closeMenu = (el) => {
-    if (el.id === 'region-button') {
-      window.removeEventListener('keydown', this.closeOnEscape);
-      window.removeEventListener('click', this.closeOnDocClick);
-    }
     el.setAttribute('aria-expanded', false);
   }
 
@@ -231,10 +165,6 @@ class Footer {
     const type = el.classList[0];
     const expandedMenu = document.querySelector(`.${type}[aria-expanded=true]`);
     if (expandedMenu) { this.closeMenu(expandedMenu); }
-    if (el.id === 'region-button') {
-      window.addEventListener('keydown', this.closeOnEscape);
-      window.addEventListener('click', this.closeOnDocClick);
-    }
     el.setAttribute('aria-expanded', true);
   }
 
@@ -244,20 +174,6 @@ class Footer {
     }
   }
 
-  closeOnEscape = (e) => {
-    const button = document.getElementById('region-button');
-    if (e.code === 'Escape') {
-      this.closeMenu(button);
-    }
-  }
-
-  closeOnDocClick = (e) => {
-    const button = document.getElementById('region-button');
-    const a = e.target.closest('a');
-    if (a !== button) {
-      this.closeMenu(button);
-    }
-  }
 
   onMediaChange = (e) => {
     if (e.matches) {
