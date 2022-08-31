@@ -127,65 +127,13 @@ export function makeLinksRelative(main) {
   });
 }
 
-const LANG = {
-  EN: 'en',
-  DE: 'de',
-  FR: 'fr',
-  KO: 'ko',
-  ES: 'es',
-  IT: 'it',
-  JP: 'jp',
-  BR: 'br',
-};
-
-let language;
-
-export function getLanguage() {
-  if (language) return language;
-  language = LANG.EN;
-  const segs = window.location.pathname.split('/');
-  if (segs && segs.length > 0) {
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [, value] of Object.entries(LANG)) {
-      if (value === segs[1]) {
-        language = value;
-        break;
-      }
-    }
-  }
-  return language;
-}
-
-export function getLocale() {
-  const lang = getLanguage();
-  return LANG_LOCALE[lang];
-}
-
-function getDateLocale() {
-  let dateLocale = getLanguage();
-  if (dateLocale === LANG.EN) {
-    dateLocale = 'en-US'; // default to US date format
-  }
-  if (dateLocale === LANG.BR) {
-    dateLocale = 'pt-BR';
-  }
-  if (dateLocale === LANG.JP) {
-    dateLocale = 'ja-JP';
-  }
-  const pageName = window.location.pathname.split('/').pop().split('.')[0];
-  if (pageName === 'uk' || pageName === 'apac') {
-    dateLocale = 'en-UK'; // special handling for UK and APAC landing pages
-  }
-  return dateLocale;
-}
 
 /**
- * Returns the language dependent root path
+ * Returns the root path
  * @returns {string} The computed root path
  */
 export function getRootPath() {
-  const loc = getLanguage();
-  return `/${loc}`;
+  return '';
 }
 
 
@@ -1005,7 +953,7 @@ async function loadLazy() {
     const limit = 500;
     let offset = 0;
     while (offset < limit * 10) {
-      addPublishDependencies(`/${getLanguage()}/query-index.json?limit=${limit}&offset=${offset}`);
+      addPublishDependencies(`/query-index.json?limit=${limit}&offset=${offset}`);
       offset += limit;
     }
   }
