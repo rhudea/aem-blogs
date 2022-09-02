@@ -244,6 +244,113 @@ function computeTaxonomyFromTopics(topics, path) {
 }
 
 /**
+ * Formats the article date for the card using the date locale
+ * matching the content displayed.
+ * @param {number} date The date to format
+ * @returns {string} The formatted card date
+ */
+ export function formatLocalCardDate(date) {
+  let jsDate = date;
+  if (!date.includes('-')) {
+    // number case, coming from Excel
+    // 1/1/1900 is day 1 in Excel, so:
+    // - add this
+    // - add days between 1/1/1900 and 1/1/1970
+    // - add one more day for Excel's leap year bug
+    jsDate = new Date(Math.round((date - (1 + 25567 + 1)) * 86400 * 1000));
+  } else {
+    // Safari won't accept '-' as a date separator
+    jsDate = date.replace(/-/g, '/');
+  }
+  const dateLocale = getDateLocale();
+
+  let dateString = new Date(jsDate).toLocaleDateString(dateLocale, {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    timeZone: 'UTC',
+  });
+  if (dateLocale === 'en-US') {
+    // stylize US date format with dashes instead of slashes
+    dateString = dateString.replace(/\//g, '-');
+  }
+  return dateString;
+}
+
+function getDateLocale() {
+  return 'en-US';;
+}
+
+/**
+ * gets a blog article index information by path.
+ * @param {string} path indentifies article
+ * @returns {object} article object (or null if article does not exist)
+ */
+
+ export async function getBlogArticle(path) {
+  const meta = await getMetadataJson(`${path}.metadata.json`);
+
+  if (meta) {
+    let title = meta['og:title'].trim();
+    const trimEndings = ['|AlexForbes', '| AlexForbes', '| AlexForbes Blog', '|AlexForbes Blog'];
+    trimEndings.forEach((ending) => {
+      if (title.endsWith(ending)) title = title.substr(0, title.length - ending.length);
+    });
+
+    const articleMeta = {
+      description: meta.description,
+      title,
+      author: meta.author,
+      image: meta['og:image'],
+      imageAlt: meta['og:image:alt'],
+      date: meta['publication-date'],
+      path,
+      tags: meta['article:tag'],
+    };
+    loadArticleTaxonomy(articleMeta);
+    return articleMeta;
+  }
+  return null;
+}
+
+/**
+ * forward looking *.metadata.json experiment
+ * fetches metadata.json of page
+ * @param {path} path to *.metadata.json
+ * @returns {Object} containing sanitized meta data
+ */
+ async function getMetadataJson(path) {
+  let resp;
+  try {
+    resp = await fetch(`${path.split('.')[0]}?noredirect`);
+  } catch {
+    debug(`Could not retrieve metadata for ${path}`);
+  }
+
+  if (resp && resp.ok) {
+    const text = await resp.text();
+    const headStr = text.split('<head>')[1].split('</head>')[0];
+    const head = document.createElement('head');
+    head.innerHTML = headStr;
+    const metaTags = head.querySelectorAll(':scope > meta');
+    const meta = {};
+    metaTags.forEach((metaTag) => {
+      const name = metaTag.getAttribute('name') || metaTag.getAttribute('property');
+      const value = metaTag.getAttribute('content');
+      if (meta[name]) {
+        meta[name] += `, ${value}`;
+      } else {
+        meta[name] = value;
+      }
+    });
+    return meta;
+  }
+  return null;
+}
+
+
+
+/**
  * Returns a link tag with the proper href for the given topic.
  * If the taxonomy is not yet available, the tag is decorated with the topicLink
  * data attribute so that the link can be fixed later.
@@ -971,6 +1078,137 @@ function loadDelayed() {
     }, ms);
   }
 }
+
+/**
+ * Build article card
+ * @param {Element} article The article data to be placed in card.
+ * @returns card Generated card
+ */
+ export function buildArticleCard(article, type = 'article', eager = false) {
+  const {
+    title, description, image, imageAlt, date,
+  } = article;
+
+  const path = article.path.split('.')[0];
+
+  const picture = createOptimizedPicture(image, imageAlt || title, eager, [{ width: '750' }]);
+  const pictureTag = picture.outerHTML;
+  const card = document.createElement('a');
+  card.className = `${type}-card`;
+  card.href = path;
+
+  const articleTax = getArticleTaxonomy(article);
+  const categoryTag = getLinkForTopic(articleTax.category, path);
+
+  card.innerHTML = `<div class="${type}-card-image">
+      ${pictureTag}
+    </div>
+    <div class="${type}-card-body">
+      <p class="${type}-card-category">
+        ${categoryTag}
+      </p>
+      <h3>${title}</h3>
+      <p class="${type}-card-description">${description}</p>
+      <p class="${type}-card-date">${formatLocalCardDate(date)}
+    </div>`;
+  return card;
+}
+
+/**
+ * fetches blog article index.
+ * @returns {object} index with data and path lookup
+ */
+ export async function fetchBlogArticleIndex() {
+  const pageSize = 500;
+  window.blogIndex = window.blogIndex || {
+    data: [],
+    byPath: {},
+    offset: 0,
+    complete: false,
+  };
+  if (window.blogIndex.complete) return (window.blogIndex);
+  const index = window.blogIndex;
+  const resp = await fetch(`${getRootPath()}/temp-index.json?limit=${pageSize}&offset=${index.offset}`);
+  const json = await resp.json();
+  const complete = (json.limit + json.offset) === json.total;
+  json.data.forEach((post) => {
+    index.data.push(post);
+    index.byPath[post.path.split('.')[0]] = post;
+  });
+  index.complete = complete;
+  index.offset = json.offset + pageSize;
+  return (index);
+}
+
+/**
+ * Loads (i.e. sets on object) the taxonmoy properties for the given article.
+ * @param {Object} article The article to enhance with the taxonomy data
+ */
+ function loadArticleTaxonomy(article) {
+  if (!article.allTopics) {
+    // for now, we can only compute the category
+    const { tags, path } = article;
+
+    if (tags) {
+      const topics = tags
+        .replace(/[["\]]/gm, '')
+        .split(',')
+        .map((t) => t.trim())
+        .filter((t) => t && t !== '');
+
+      const articleTax = computeTaxonomyFromTopics(topics, path);
+
+      article.category = articleTax.category;
+
+      // topics = tags as an array
+      article.topics = topics;
+
+      // visibleTopics = visible topics including parents
+      article.visibleTopics = articleTax.allVisibleTopics;
+
+      // allTopics = all topics including parents
+      article.allTopics = articleTax.allTopics;
+    } else {
+      article.category = 'News';
+      article.topics = [];
+      article.visibleTopics = [];
+      article.allTopics = [];
+    }
+  }
+}
+
+
+/**
+ * Get the taxonomy of the given article. Object can be composed of:
+ * - category: main topic
+ * - topics: tags as an array
+ * - visibleTopics: list of visible topics, including parents
+ * - allTopics: list of all topics, including parents
+ * Note: to get the full object, taxonomy must be loaded
+ * @param {Object} article The article
+ * @returns The taxonomy object
+ */
+ export function getArticleTaxonomy(article) {
+  if (!article.allTopics) {
+    loadArticleTaxonomy(article);
+  }
+
+  const {
+    category,
+    topics,
+    visibleTopics,
+    allTopics,
+  } = article;
+
+  return {
+    category, topics, visibleTopics, allTopics,
+  };
+}
+
+export function getTaxonomy() {
+  return taxonomy;
+}
+
 
 /**
  * Decorates the page.

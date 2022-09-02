@@ -116,7 +116,7 @@ function buildSharing() {
 
 function validateDate(date) {
   if (date
-    && !window.location.hostname.includes('adobe.com')
+    && !window.location.hostname.includes('blog.alexforbes.com')
     && window.location.pathname.includes('/publish/')) {
     // match publication date to MM-DD-YYYY format
     if (!/[0-1]\d{1}-[0-3]\d{1}-[2]\d{3}/.test(date.textContent.trim())) {
@@ -153,7 +153,7 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   // author img
   const authorImg = document.createElement('div');
   authorImg.classList = 'article-author-image';
-  authorImg.style.backgroundImage = 'url(/blocks/article-header/adobe-logo.svg)';
+  authorImg.style.backgroundImage = 'url(/blocks/article-header/alexforbes-connector.svg)';
   bylineContainer.prepend(authorImg);
   populateAuthorInfo(authorLink, authorImg, authorURL, authorName, eager);
   // sharing

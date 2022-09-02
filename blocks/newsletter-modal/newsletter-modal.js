@@ -53,10 +53,10 @@ export default async function decorate(block) {
   $close.append($closeIcon);
   block.append($bannerContainer);
 
-  $text.innerText = 'Let’s connect. Get the most popular Adobe Blog articles in your inbox every week.';
+  $text.innerText = 'Let’s connect. Get the most popular AlexForbes Blog articles in your inbox every week.';
   $content.append($text);
 
-  $disclaimer.innerHTML = 'The Adobe family of companies may keep me informed with personalized emails from the Adobe Blog team. See our <a href="https://adobe.com/privacy" target="_blank" rel="noopener">Privacy Policy</a> for more details or to opt-out at any time.';
+  $disclaimer.innerHTML = 'The AlexForbes family of companies may keep me informed with personalized emails from the AlexForbes Blog team. See our <a href="https://alexforbes.com/privacy" target="_blank" rel="noopener">Privacy Policy</a> for more details or to opt-out at any time.';
   $content.append($disclaimer);
 
   $emailText.innerText = 'Email *';
@@ -78,7 +78,7 @@ export default async function decorate(block) {
       const body = {
         sname: 'adbeblog',
         email,
-        consent_notice: '<div class="disclaimer detail-spectrum-m" style="letter-spacing: 0px; padding-top: 15px;">The Adobe family of companies may keep me informed with personalized emails from the Adobe Blog team. See our <a href="https://www.adobe.com/privacy/policy.html" target="_blank">Privacy Policy</a> for more details or to opt-out at any time.</div>',
+        consent_notice: '<div class="disclaimer detail-spectrum-m" style="letter-spacing: 0px; padding-top: 15px;">The AlexForbes family of companies may keep me informed with personalized emails from the AlexForbes Blog team. See our <a href="https://www.alexforbes.com/privacy/policy.html" target="_blank">Privacy Policy</a> for more details or to opt-out at any time.</div>',
         current_url: window.location.href,
       };
 
@@ -88,9 +88,9 @@ export default async function decorate(block) {
         body: JSON.stringify(body),
       };
 
-      fetch('https://www.adobe.com/api2/subscribe_v1', requestOptions)
+      fetch('https://www.alexforbes.com/api2/subscribe_v1', requestOptions)
         .then(() => {
-          displayConfirmation($container, $content, 'Thank you for subscribing to the Adobe Blog Newsletter.');
+          displayConfirmation($container, $content, 'Thank you for subscribing to the AlexForbes Blog Newsletter.');
         })
         .catch(() => {
           displayConfirmation($container, $content, 'An error occurred during subscription. Please refresh the page and try again.');

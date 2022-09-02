@@ -1,3 +1,5 @@
+/* above the fold CSS goes here */
+
 /* default content */
 :root {
   --color-white: #FFF;
@@ -10,16 +12,16 @@
   --color-gray-700: #444;
   --color-gray-800: #242424;
   --color-black: #000;
-  --color-brand-title: #124e57;
-  --color-info-accent: ##f15a22;
-  --color-info-accent-hover: #f69521;
-  --color-info-accent-down: #124e57;
-  --color-info-accent-light: #15808d;
+  --color-brand-title: #000B1D;
+  --color-info-accent: #5C5CE0;
+  --color-info-accent-hover: #4646C6;
+  --color-info-accent-down: #3D3DB4;
+  --color-info-accent-light: #DEDEF9;
 
   /* body */
   --body-background-color: var(--color-white);
   --body-alt-background-color: var(--color-gray-600);
-  --body-font-family: "Hero New",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  --body-font-family: "Source Sans Pro",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
   --body-font-weight: 400;
   --body-color: var(--color-black);
   --body-line-height: 1.5;
@@ -33,7 +35,7 @@
 
   /* headings */
   --heading-font-weight: 700;
-  --heading-color: var(--color-brand-title);
+  --heading-color: var(--color-gray-800);
   --heading-line-height: 1.25;
   --heading-font-size-xxxl: 5rem; /* 80px */
   --heading-font-size-xxl: 2.75rem; /* 44px */
