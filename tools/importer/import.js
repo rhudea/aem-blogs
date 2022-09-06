@@ -27,13 +27,7 @@ export default {
         document, url, html, params,
     }) => {
 
-        const cells = [
-            ['Metadata'],
-            ['Title', document.querySelector('.content-header__title').innerHTML],
-            ['Description', document.querySelector('.apos-rich-text:first-of-type > p').innerHTML.substring(0, 100) + '...'],
-            ['Publication Date', document.querySelector('.content-header__date-tag').innerHTML]
-        ];
-
+        const metadata = buildMetadata(document);
         // use helper method to remove header, footer, etc.
         WebImporter.DOMUtils.remove(document.body, [
             'header',
@@ -45,13 +39,15 @@ export default {
             '.fixed-bottom',
             '.modal',
             '.btn-cta',
-            '.content-header__date-tag'
+            '.content-header__date-tag',
+            '.media--author',
+            '.content-header__relation-title',
+            '.whatsnext-container'
         ]);
 
-        const table = WebImporter.DOMUtils.createTable(cells, document);
+        const table = WebImporter.DOMUtils.createTable(metadata, document);
         document.querySelector('body').append(table);
-
-        
+        buildReferences(document);
         return document.body;
     },
 
@@ -69,3 +65,64 @@ export default {
         document, url, html, params,
     }) => new URL(url).pathname.replace(/\.html$/, '').replace(/\/$/, ''),
 };
+
+function capitalize(sentence) {
+    if (sentence) {
+        sentence = sentence.trim();
+        let regex = /&(nbsp|amp|quot|lt|gt);/g;
+        sentence = sentence.replace(regex, " ");
+        var splitStr = sentence.toLowerCase().split(' ');
+        for (var i = 0; i < splitStr.length; i++) {
+            // You do not need to check if i is larger than splitStr length, as your for does that for you
+            // Assign it back to the array
+            splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+        }
+        // Directly return the joined string
+        return splitStr.join(' ');
+    }
+}
+
+function buildMetadata(document) {
+    const cells = [['Metadata']];
+    if (document.querySelector('.content-header__date-tag')) {
+        cells.push(['Publication Date', capitalize(document.querySelector('.content-header__date-tag').innerHTML)]);
+    }
+    if (document.querySelector('.media--author__title')) {
+        cells.push(['Author', document.querySelector('.media--author__title').innerHTML]);
+    }
+    if (document.querySelector('.content-header__title')) {
+        cells.push(['Title', document.querySelector('.content-header__title').innerHTML]);
+    }
+    if (document.querySelector('.apos-rich-text:first-of-type > p')) {
+        let desc = document.querySelector('.apos-rich-text:first-of-type > p').innerHTML;
+        if (desc.length > 0) {
+            desc = desc.substring(0, 100) + '...';
+        }
+        cells.push(['Description', desc]);
+    }
+    if (document.querySelector('.caption.content-header__breadcrumb > a')) {
+        cells.push(['Tags', document.querySelector('.caption.content-header__breadcrumb > a').innerHTML.trim()]);
+    }
+    return cells;
+}
+
+function buildReferences(document) {
+    const regex = /&(nbsp|amp|quot|lt|gt);/g;
+    const ul = document.createElement('ol');
+    document.querySelectorAll('.h5').forEach(element => {
+        if (element.innerHTML === 'References') {
+            const parent = element.parentNode;
+            element.nextElementSibling.innerHTML.split('<br>').forEach((item) => {
+                const numPrefixRegex = /\d+\s/;
+                const li = document.createElement('li');
+                item = item.replace(regex, ' ').replace(numPrefixRegex, '');
+                li.innerHTML = item;
+                ul.append(li);
+            });
+            parent.innerHTML = '';
+            parent.append(element);
+            parent.append(ul);
+
+        }
+    });
+}
