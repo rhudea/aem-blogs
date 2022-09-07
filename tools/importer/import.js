@@ -48,6 +48,7 @@ export default {
         const table = WebImporter.DOMUtils.createTable(metadata, document);
         document.querySelector('body').append(table);
         buildReferences(document);
+        embedVideo(document);
         return document.body;
     },
 
@@ -122,7 +123,22 @@ function buildReferences(document) {
             parent.innerHTML = '';
             parent.append(element);
             parent.append(ul);
-
         }
+    });
+}
+
+function embedVideo(document) {
+    document.querySelectorAll('[data-apos-widget="video-embed"] iframe').forEach((item) => {
+        const cells = [['embed']];
+        const src = item.getAttribute('src');
+        const link = document.createElement('a');
+        link.href = src;
+        link.textContent = link.href;
+        cells.push([link]);
+        const parent = item.parentNode;
+        parent.innerHTML = '';
+        const table = WebImporter.DOMUtils.createTable(cells, document);
+        parent.append(table);
+
     });
 }
