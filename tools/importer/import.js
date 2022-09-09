@@ -28,6 +28,7 @@ export default {
     }) => {
 
         const metadata = buildMetadata(document);
+        const addlMaterials = buildAdditionalMaterials(document);
         // use helper method to remove header, footer, etc.
         WebImporter.DOMUtils.remove(document.body, [
             'header',
@@ -42,14 +43,17 @@ export default {
             '.content-header__date-tag',
             '.media--author',
             '.content-header__relation-title',
-            '.whatsnext-container'
+            '.whatsnext-container',
+            '.additional-resource-component'
         ]);
 
         const table = WebImporter.DOMUtils.createTable(metadata, document);
         document.querySelector('body').append(table);
         buildReferences(document);
         embedVideo(document);
+        document.querySelector('body').append(addlMaterials);
         return document.body;
+
     },
 
     /**
@@ -158,4 +162,38 @@ function getTags(document) {
         });
     }
     return tagSet;
+}
+
+function buildAdditionalMaterials(document) {
+    const div = document.createElement('div');
+    const mainHeading = document.createElement('h2');
+    mainHeading.textContent = 'Additional Materials';
+    div.append(mainHeading);
+    document.querySelectorAll('.additional-resource-component').forEach((arc) => {
+        const title = arc.querySelector('.additional-resource-component__media-type-title').textContent;
+        const heading = arc.querySelector('.additional-resource-component__media-content-container > .h2').textContent;
+        const caption = arc.querySelector('.additional-resource-component__media-content-container > .caption').textContent;
+        const href = arc.querySelector('a').getAttribute('href');
+        const arcDiv = document.createElement('div');
+
+        const titleNode = document.createElement('h6');
+        titleNode.textContent = title;
+        arcDiv.append(titleNode);
+
+        const headingNode = document.createElement('h5');
+        headingNode.textContent = heading;
+        arcDiv.append(headingNode);
+
+        const captionNode = document.createElement('p');
+        captionNode.textContent = caption;
+        arcDiv.append(captionNode);
+
+        const downloadLink = document.createElement('a');
+        downloadLink.textContent = 'Download';
+        downloadLink.setAttribute('href', href);
+        arcDiv.append(downloadLink);
+
+        div.append(arcDiv);
+    });
+    return div;
 }
