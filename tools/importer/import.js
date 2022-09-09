@@ -101,8 +101,14 @@ function buildMetadata(document) {
         }
         cells.push(['Description', desc]);
     }
-    if (document.querySelector('.caption.content-header__breadcrumb > a')) {
-        cells.push(['Tags', document.querySelector('.caption.content-header__breadcrumb > a').innerHTML.trim()]);
+
+    const tags = getTags(document);
+    cells.push(['Tags', Array.from(tags).join(',')]);
+
+    const contentHeader = document.querySelector('.caption.content-header__breadcrumb > a');
+    if (contentHeader) {
+        const category = capitalize(contentHeader.getAttribute('href').split('/')[1]);
+        cells.push([category, document.querySelector('.caption.content-header__breadcrumb > a').innerHTML.trim()]);
     }
     return cells;
 }
@@ -141,4 +147,15 @@ function embedVideo(document) {
         parent.append(table);
 
     });
+}
+
+function getTags(document) {
+    const tags = document.querySelectorAll('.tag-group > a');
+    const tagSet = new Set();
+    if(tags) {
+        tags.forEach((tag) => {
+            tagSet.add(capitalize(tag.textContent));
+        });
+    }
+    return tagSet;
 }
