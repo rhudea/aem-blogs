@@ -51,7 +51,10 @@ export default {
         document.querySelector('body').append(table);
         buildReferences(document);
         embedVideo(document);
-        document.querySelector('body').append(addlMaterials);
+        if(addlMaterials.length > 1) {
+            document.querySelector('body').append(WebImporter.DOMUtils.createTable(addlMaterials, document));
+        }
+        
         return document.body;
 
     },
@@ -156,7 +159,7 @@ function embedVideo(document) {
 function getTags(document) {
     const tags = document.querySelectorAll('.tag-group > a');
     const tagSet = new Set();
-    if(tags) {
+    if (tags) {
         tags.forEach((tag) => {
             tagSet.add(capitalize(tag.textContent));
         });
@@ -165,35 +168,21 @@ function getTags(document) {
 }
 
 function buildAdditionalMaterials(document) {
-    const div = document.createElement('div');
-    const mainHeading = document.createElement('h2');
-    mainHeading.textContent = 'Additional Materials';
-    div.append(mainHeading);
+    const cells = [['Additional Materials']];
     document.querySelectorAll('.additional-resource-component').forEach((arc) => {
-        const title = arc.querySelector('.additional-resource-component__media-type-title').textContent;
-        const heading = arc.querySelector('.additional-resource-component__media-content-container > .h2').textContent;
-        const caption = arc.querySelector('.additional-resource-component__media-content-container > .caption').textContent;
+        const title = arc.querySelector('.additional-resource-component__media-type-title').textContent.trim();
+        const heading = arc.querySelector('.additional-resource-component__media-content-container > .h2').textContent.trim();
+        const caption = arc.querySelector('.additional-resource-component__media-content-container > .caption').textContent.trim();
         const href = arc.querySelector('a').getAttribute('href');
-        const arcDiv = document.createElement('div');
-
-        const titleNode = document.createElement('h6');
-        titleNode.textContent = title;
-        arcDiv.append(titleNode);
-
-        const headingNode = document.createElement('h5');
-        headingNode.textContent = heading;
-        arcDiv.append(headingNode);
-
-        const captionNode = document.createElement('p');
-        captionNode.textContent = caption;
-        arcDiv.append(captionNode);
-
-        const downloadLink = document.createElement('a');
-        downloadLink.textContent = 'Download';
-        downloadLink.setAttribute('href', href);
-        arcDiv.append(downloadLink);
-
-        div.append(arcDiv);
+        const size = arc.querySelector('.additional-resource-component__media-type-info').textContent.trim();
+        const classList = arc.querySelector('.additional-resource-component__media-type-info').classList;
+        let mtype;
+        classList.forEach((token) => {
+            if (token.startsWith('mType')) {
+                mtype = token;
+            }
+        })
+        cells.push([[title], [heading], [caption], [href], [size], [mtype]]);
     });
-    return div;
+    return cells;
 }
