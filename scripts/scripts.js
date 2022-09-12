@@ -24,7 +24,7 @@ const PRODUCTION_DOMAINS = ['blog.alexforbes.com'];
  * @param {Object} data additional data for RUM sample
  */
 
- export function sampleRUM(checkpoint, data = {}) {
+export function sampleRUM(checkpoint, data = {}) {
   sampleRUM.defer = sampleRUM.defer || [];
   const defer = (fnname) => {
     sampleRUM[fnname] = sampleRUM[fnname]
@@ -155,7 +155,7 @@ export function getMetadata(name, asArray = false) {
  * Get the current Helix environment
  * @returns {Object} the env object
  */
- export function getHelixEnv() {
+export function getHelixEnv() {
   let envName = sessionStorage.getItem('helix-env');
   if (!envName) envName = 'prod';
   const envs = {
@@ -249,7 +249,7 @@ function computeTaxonomyFromTopics(topics, path) {
  * @param {number} date The date to format
  * @returns {string} The formatted card date
  */
- export function formatLocalCardDate(date) {
+export function formatLocalCardDate(date) {
   let jsDate = date;
   if (!date.includes('-')) {
     // number case, coming from Excel
@@ -287,7 +287,7 @@ function getDateLocale() {
  * @returns {object} article object (or null if article does not exist)
  */
 
- export async function getBlogArticle(path) {
+export async function getBlogArticle(path) {
   const meta = await getMetadataJson(`${path}.metadata.json`);
 
   if (meta) {
@@ -319,7 +319,7 @@ function getDateLocale() {
  * @param {path} path to *.metadata.json
  * @returns {Object} containing sanitized meta data
  */
- async function getMetadataJson(path) {
+async function getMetadataJson(path) {
   let resp;
   try {
     resp = await fetch(`${path.split('.')[0]}?noredirect`);
@@ -1041,6 +1041,7 @@ async function loadLazy() {
   footer.setAttribute('data-footer-source', `${getRootPath()}/footer`);
   loadBlock(footer);
 
+  await loadTaxonomy();
   /* taxonomy dependent */
   buildTagsBlock(main);
 
@@ -1084,7 +1085,7 @@ function loadDelayed() {
  * @param {Element} article The article data to be placed in card.
  * @returns card Generated card
  */
- export function buildArticleCard(article, type = 'article', eager = false) {
+export function buildArticleCard(article, type = 'article', eager = false) {
   const {
     title, description, image, imageAlt, date,
   } = article;
@@ -1118,7 +1119,7 @@ function loadDelayed() {
  * fetches blog article index.
  * @returns {object} index with data and path lookup
  */
- export async function fetchBlogArticleIndex() {
+export async function fetchBlogArticleIndex() {
   const pageSize = 500;
   window.blogIndex = window.blogIndex || {
     data: [],
@@ -1140,11 +1141,66 @@ function loadDelayed() {
   return (index);
 }
 
+// eslint-disable-next-line no-unused-vars
+async function loadTaxonomy() {
+  const mod = await import('./taxonomy.js');
+  taxonomy = await mod.default();
+  if (taxonomy) {
+    // taxonomy loaded, post loading adjustments
+    // fix the links which have been created before the taxonomy has been loaded
+    // (pre lcp or in lcp block).
+    document.querySelectorAll('[data-topic-link]').forEach((a) => {
+      const topic = a.dataset.topicLink;
+      const tax = taxonomy.get(topic);
+      if (tax) {
+        a.href = tax.link;
+      } else {
+        // eslint-disable-next-line no-console
+        debug(`Trying to get a link for an unknown topic: ${topic} (current page)`);
+        a.href = '#';
+      }
+      delete a.dataset.topicLink;
+    });
+
+    // adjust meta article:tag
+
+    const currentTags = getMetadata('article:tag', true);
+    const articleTax = computeTaxonomyFromTopics(currentTags);
+
+    const allTopics = articleTax.allTopics || [];
+    allTopics.forEach((topic) => {
+      if (!currentTags.includes(topic)) {
+        // computed topic (parent...) is not in meta -> add it
+        const newMetaTag = document.createElement('meta');
+        newMetaTag.setAttribute('property', 'article:tag');
+        newMetaTag.setAttribute('content', topic);
+        document.head.append(newMetaTag);
+      }
+    });
+
+    currentTags.forEach((tag) => {
+      const tax = taxonomy.get(tag);
+      if (tax && tax.skipMeta) {
+        // if skipMeta, remove from meta "article:tag"
+        const meta = document.querySelector(`[property="article:tag"][content="${tag}"]`);
+        if (meta) {
+          meta.remove();
+        }
+        // but add as meta with name
+        const newMetaTag = document.createElement('meta');
+        newMetaTag.setAttribute('name', tag);
+        newMetaTag.setAttribute('content', 'true');
+        document.head.append(newMetaTag);
+      }
+    });
+  }
+}
+
 /**
  * Loads (i.e. sets on object) the taxonmoy properties for the given article.
  * @param {Object} article The article to enhance with the taxonomy data
  */
- function loadArticleTaxonomy(article) {
+function loadArticleTaxonomy(article) {
   if (!article.allTopics) {
     // for now, we can only compute the category
     const { tags, path } = article;
@@ -1188,7 +1244,7 @@ function loadDelayed() {
  * @param {Object} article The article
  * @returns The taxonomy object
  */
- export function getArticleTaxonomy(article) {
+export function getArticleTaxonomy(article) {
   if (!article.allTopics) {
     loadArticleTaxonomy(article);
   }
