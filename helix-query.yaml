@@ -4,10 +4,9 @@ version: 1
 indices:
   site:
     include:
-      - '/topics/**'
+      - '/publish/*'
     exclude:
-      - '/topics/investments'
-      - '/topics/behavioural-finance'
+      - '/topics/*'
       - '**/Document.*'
     target: /query-index.xlsx
     properties:
@@ -22,7 +21,7 @@ indices:
       date:
         select: head > meta[name="publication-date"]
         value: |
-          dateValue(attribute(el, 'content'), 'MM-DD-YYYY')
+          attribute(el, 'content')
       image:
         select: head > meta[property="og:image"]
         value: |
