@@ -6,6 +6,7 @@ indices:
     include:
       - '/topics/**'
     exclude:
+      - '/topics/investments'
       - '**/Document.*'
     target: /query-index.xlsx
     properties:
