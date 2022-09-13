@@ -7,6 +7,7 @@ indices:
       - '/topics/**'
     exclude:
       - '/topics/investments'
+      - '/topics/behavioural-finance'
       - '**/Document.*'
     target: /query-index.xlsx
     properties:
