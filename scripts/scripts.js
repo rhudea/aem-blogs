@@ -207,7 +207,7 @@ let taxonomy;
  */
 function computeTaxonomyFromTopics(topics, path) {
   // no topics: default to a randomly choosen category
-  const category = topics?.length > 0 ? topics[0] : 'news';
+  const category = topics?.length > 0 ? topics[0] : 'News';
 
   if (taxonomy) {
     const allTopics = [];
