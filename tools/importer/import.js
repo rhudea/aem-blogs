@@ -26,7 +26,6 @@ export default {
         // eslint-disable-next-line no-unused-vars
         document, url, html, params,
     }) => {
-
         const metadata = buildMetadata(document);
         const addlMaterials = buildAdditionalMaterials(document);
         // use helper method to remove header, footer, etc.
@@ -46,15 +45,18 @@ export default {
             '.whatsnext-container',
             '.additional-resource-component'
         ]);
-
         const table = WebImporter.DOMUtils.createTable(metadata, document);
         document.querySelector('body').append(table);
         buildReferences(document);
         embedVideo(document);
-        if(addlMaterials.length > 1) {
+        if (addlMaterials.length > 1) {
             document.querySelector('body').append(WebImporter.DOMUtils.createTable(addlMaterials, document));
         }
-        
+        document.querySelectorAll('u').forEach((u) => {
+            const span = document.createElement('span');
+            span.innerHTML = u.innerHTML;
+            u.replaceWith(span);
+        });
         return document.body;
 
     },
@@ -173,7 +175,11 @@ function buildAdditionalMaterials(document) {
         const title = arc.querySelector('.additional-resource-component__media-type-title').textContent.trim();
         const heading = arc.querySelector('.additional-resource-component__media-content-container > .h2').textContent.trim();
         const caption = arc.querySelector('.additional-resource-component__media-content-container > .caption').textContent.trim();
-        const href = arc.querySelector('a').getAttribute('href');
+        let href;
+        if (arc.querySelector('a')) {
+            href = arc.querySelector('a').getAttribute('href');
+            console.log('\nAdditonal material: ' + href);
+        }
         const size = arc.querySelector('.additional-resource-component__media-type-info').textContent.trim();
         const classList = arc.querySelector('.additional-resource-component__media-type-info').classList;
         let mtype;
