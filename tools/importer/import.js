@@ -178,6 +178,7 @@ function buildAdditionalMaterials(document) {
         let href;
         if (arc.querySelector('a')) {
             href = arc.querySelector('a').getAttribute('href');
+            href = href.replace('https:\/\/thought-leadership.azureedge.net\/website\/attachments\/', 'https://main--aem-blogs--alexander-forbes.hlx.page/assets/pdf/')
             console.log('\nAdditonal material: ' + href);
         }
         const size = arc.querySelector('.additional-resource-component__media-type-info').textContent.trim();
