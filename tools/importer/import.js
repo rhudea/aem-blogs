@@ -186,6 +186,11 @@ function buildAdditionalMaterials(document) {
             if (!href.toLowerCase().endsWith('.pdf')) {
                 console.log('\Non PDF material: ' + href);
             }
+        } else  if (arc.querySelector('.additional-resource-component__media-macro-container')) {
+            const iframe = arc.querySelector('.additional-resource-component__media-macro-container').querySelector('iframe');
+            if(iframe) {
+                href = iframe.getAttribute('src');
+            }
         }
         const size = arc.querySelector('.additional-resource-component__media-type-info').textContent.trim();
         const classList = arc.querySelector('.additional-resource-component__media-type-info').classList;
