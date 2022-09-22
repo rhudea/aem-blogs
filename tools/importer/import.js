@@ -22,13 +22,14 @@ export default {
      * @param {object} params Object containing some parameters given by the import process.
      * @returns {HTMLElement} The root element to be transformed
      */
-    transformDOM: ({
+    transform: ({
         // eslint-disable-next-line no-unused-vars
         document, url, html, params,
     }) => {
         //console.log(articleTagDict);
         const metadata = buildMetadata(document, url);
         const addlMaterials = buildAdditionalMaterials(document);
+        const authorDoc = buildAuthorDoc(document);
         // use helper method to remove header, footer, etc.
         WebImporter.DOMUtils.remove(document.body, [
             'header',
@@ -58,8 +59,17 @@ export default {
             span.innerHTML = u.innerHTML;
             u.replaceWith(span);
         });
-        return document.body;
-
+        const result = [{
+            element: document.body,
+            path: '/publish/' + new URL(params.originalURL).pathname.replace(/\/$/, '').replace('/parts', '').replace('/chapters', '').replace('/topics', ''),
+        }];
+        if (authorDoc) {
+            result.push({
+                element: authorDoc[1],
+                path: '/authors/' + authorDoc[0],
+            });
+        }
+        return result;
     },
 
     /**
@@ -76,6 +86,24 @@ export default {
         document, url, html, params,
     }) => new URL(url).pathname.replace(/\.html$/, '').replace(/\/$/, ''),
 };
+
+function buildAuthorDoc(document) {
+    if (document.querySelector('.media--author')) {
+        const authorName = document.querySelector('.media--author__title').innerHTML;
+        const authorImg = document.querySelector('.media--author__img');
+        const div = document.createElement('div');
+        const h1 = document.createElement('h1');
+        h1.innerHTML = authorName;
+        div.append(h1);
+        if (authorImg) {
+            div.append(authorImg);
+        }
+        const cells = [['Article Feed']];
+        cells.push(['Author', authorName]);
+        div.append(WebImporter.DOMUtils.createTable(cells, document));
+        return [authorName.toLowerCase().replaceAll(' ', '-'), div];
+    }
+}
 
 function capitalize(sentence) {
     if (sentence) {
@@ -186,9 +214,9 @@ function buildAdditionalMaterials(document) {
             if (!href.toLowerCase().endsWith('.pdf')) {
                 console.log('\Non PDF material: ' + href);
             }
-        } else  if (arc.querySelector('.additional-resource-component__media-macro-container')) {
+        } else if (arc.querySelector('.additional-resource-component__media-macro-container')) {
             const iframe = arc.querySelector('.additional-resource-component__media-macro-container').querySelector('iframe');
-            if(iframe) {
+            if (iframe) {
                 href = iframe.getAttribute('src');
             }
         }
