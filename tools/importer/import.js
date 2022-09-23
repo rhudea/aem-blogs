@@ -30,6 +30,7 @@ export default {
         const metadata = buildMetadata(document, url);
         const addlMaterials = buildAdditionalMaterials(document);
         const authorDoc = buildAuthorDoc(document);
+        //buildQuotes(document);
         // use helper method to remove header, footer, etc.
         WebImporter.DOMUtils.remove(document.body, [
             'header',
@@ -45,7 +46,8 @@ export default {
             '.media--author',
             '.content-header__relation-title',
             '.whatsnext-container',
-            '.additional-resource-component'
+            '.additional-resource-component',
+            //'.quote-block__quote'
         ]);
         const table = WebImporter.DOMUtils.createTable(metadata, document);
         document.querySelector('body').append(table);
@@ -87,6 +89,15 @@ export default {
     }) => new URL(url).pathname.replace(/\.html$/, '').replace(/\/$/, ''),
 };
 
+function buildQuotes(document) {
+    document.querySelectorAll('.quote-block__quote').forEach((item) => {
+        const cells = [['Pull Quote']];
+        cells.push([item.innerHTML]);
+        const div = document.createElement('div');
+        div.append(WebImporter.DOMUtils.createTable(cells, document));
+        item.parentNode.append(div);
+    });
+}
 function buildAuthorDoc(document) {
     if (document.querySelector('.media--author')) {
         const authorName = document.querySelector('.media--author__title').innerHTML;
@@ -121,10 +132,37 @@ function capitalize(sentence) {
     }
 }
 
+function extractDate(str) {
+    let date;
+    str.split('|').every((item) => {
+        item = item.trim();
+        monthNames.every((month) => {
+            if (item.includes(month)) {
+                let dd = item.split(' ')[0];
+                let yyyy = item.split(' ')[2];
+                let mm = monthNames.indexOf(month) + 1;
+                mm = String(mm).padStart(2, '0');
+                dd = String(dd).padStart(2, '0');
+                date = mm + '-' + dd + '-' + yyyy;
+                return false;
+            } else {
+                return true;
+            }
+        });
+        if (date === undefined) {
+            return true;
+        } else {
+            return false;
+        }
+    });
+    return date;
+}
+
 function buildMetadata(document, url) {
     const cells = [['Metadata']];
     if (document.querySelector('.content-header__date-tag')) {
-        cells.push(['Publication Date', capitalize(document.querySelector('.content-header__date-tag').innerHTML)]);
+        cells.push(['Header Info', capitalize(document.querySelector('.content-header__date-tag').innerHTML)]);
+        cells.push(['Publication Date', extractDate(capitalize(document.querySelector('.content-header__date-tag').innerHTML))]);
     }
     if (document.querySelector('.media--author__title')) {
         cells.push(['Author', document.querySelector('.media--author__title').innerHTML]);
@@ -132,13 +170,18 @@ function buildMetadata(document, url) {
     if (document.querySelector('.content-header__title')) {
         cells.push(['Title', document.querySelector('.content-header__title').innerHTML]);
     }
-    if (document.querySelector('.apos-rich-text:first-of-type > p')) {
-        let desc = document.querySelector('.apos-rich-text:first-of-type > p').innerHTML;
-        if (desc.length > 0) {
-            desc = desc.substring(0, 100) + '...';
+
+    let desc = '';
+    (document.querySelectorAll('.apos-rich-text > p')).forEach((item) => {
+        if (desc.length < 100) {
+            const txt = item.innerHTML.trim();
+            desc = desc.concat(' ').concat(txt);
+            if (desc.length > 100) {
+                desc = desc.substring(0, 100) + '...';
+            }
         }
-        cells.push(['Description', desc]);
-    }
+    });
+    cells.push(['Description', desc]);
 
     //const tags = getTags(document);
     //cells.push(['Tags', Array.from(tags).join(',')]);
@@ -534,3 +577,6 @@ function formImportedUrl(url) {
 }
 
 const articleTagDict = buildArticleTagsMap();
+const monthNames = ["January", "February", "March", "April",
+    "May", "June", "July", "August",
+    "September", "October", "November", "December"];

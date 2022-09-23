@@ -535,7 +535,7 @@ function buildArticleHeader(mainEl) {
   const category = tags.length > 0 ? tags[0] : '';
   const author = getMetadata('author');
   const authorURL = getMetadata('author-url') || `${getRootPath()}/authors/${toClassName(author)}`;
-  const publicationDate = getMetadata('publication-date');
+  const headerInfo = getMetadata('header-info');
 
   const categoryTag = getLinkForTopic(category);
 
@@ -543,7 +543,7 @@ function buildArticleHeader(mainEl) {
     [`<p>${categoryTag}</p>`],
     [h1],
     [`<p><a href="${authorURL}">${author}</a></p>
-       <p>${publicationDate}</p>`],
+       <p>${headerInfo}</p>`],
     [{ elems: [picture.closest('p'), getImageCaption(picture)] }],
   ]);
   div.append(articleHeaderBlockEl);
