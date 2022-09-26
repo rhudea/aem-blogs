@@ -30,7 +30,7 @@ export default {
         const metadata = buildMetadata(document, url);
         const addlMaterials = buildAdditionalMaterials(document);
         const authorDoc = buildAuthorDoc(document);
-        //buildQuotes(document);
+        buildQuotes(document);
         // use helper method to remove header, footer, etc.
         WebImporter.DOMUtils.remove(document.body, [
             'header',
@@ -47,7 +47,7 @@ export default {
             '.content-header__relation-title',
             '.whatsnext-container',
             '.additional-resource-component',
-            //'.quote-block__quote'
+            '.quote-block__quote'
         ]);
         const table = WebImporter.DOMUtils.createTable(metadata, document);
         document.querySelector('body').append(table);
