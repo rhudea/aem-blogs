@@ -91,11 +91,10 @@ export default {
 
 function buildQuotes(document) {
     document.querySelectorAll('.quote-block__quote').forEach((item) => {
-        const cells = [['Pull Quote']];
-        cells.push([item.innerHTML]);
-        const div = document.createElement('div');
-        div.append(WebImporter.DOMUtils.createTable(cells, document));
-        item.parentNode.append(div);
+        const parent = item.closest('blockquote');
+        const cells = [['Pull Quote'], [item.innerHTML]];
+        const table = WebImporter.DOMUtils.createTable(cells, document);
+        parent.replaceWith(table);
     });
 }
 function buildAuthorDoc(document) {
