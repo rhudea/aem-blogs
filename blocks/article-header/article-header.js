@@ -83,7 +83,7 @@ function buildSharing() {
   const title = encodeURIComponent(document.querySelector('h1').textContent);
   const description = encodeURIComponent(getMetadata('description'));
   const sharing = document.createElement('div');
-  sharing.classList.add('article-byline-sharing');
+  sharing.classList.add('article-social-sharing');
   sharing.innerHTML = `<span>
       <a data-type="Twitter" data-href="https://www.twitter.com/share?&url=${url}&text=${title}">
         ${createSVG('twitter').outerHTML}
@@ -122,33 +122,39 @@ export default async function decorateArticleHeader(blockEl, blockName, document
   // title
   const titleContainer = childrenEls[1];
   titleContainer.classList.add('article-title');
-  // byline
-  const bylineContainer = childrenEls[2];
-  bylineContainer.classList.add('article-byline');
-  bylineContainer.firstChild.classList.add('article-byline-info');
-  // author
-  const author = bylineContainer.firstChild.firstChild;
-  const authorLink = author.querySelector('a');
-  const authorURL = authorLink.href;
-  const authorName = author.textContent;
-  author.classList.add('article-author');
-  // publication date
-  const date = bylineContainer.firstChild.lastChild;
-  date.classList.add('article-date');
-  // author img
-  const authorImg = document.createElement('div');
-  authorImg.classList = 'article-author-image';
-  authorImg.style.backgroundImage = 'url(/blocks/article-header/alexforbes-connector.svg)';
-  bylineContainer.prepend(authorImg);
-  populateAuthorInfo(authorLink, authorImg, authorURL, authorName, eager);
+
+  const headerInfo = childrenEls[2];
+  headerInfo.classList.add('article-date');
+
+  const authorsContainer = childrenEls[3];
+  authorsContainer.classList.add('article-authors');
+  authorsContainer.firstChild.classList.add('article-authors-info');
+  decorateAuthors(authorsContainer, eager);
+
   // sharing
   const shareBlock = buildSharing();
-  bylineContainer.append(shareBlock);
+  authorsContainer.append(shareBlock);
+
   // feature img
-  const featureImgContainer = childrenEls[3];
+  const featureImgContainer = childrenEls[4];
   featureImgContainer.classList.add('article-feature-image');
   const featureFigEl = buildFigure(featureImgContainer.firstChild);
   featureFigEl.classList.add('figure-feature');
   featureImgContainer.prepend(featureFigEl);
   featureImgContainer.lastChild.remove();
+}
+
+function decorateAuthors(authorsContainer, eager) {
+  authorsContainer.querySelectorAll(':scope > div > div').forEach((author) => {
+    author.classList.add('article-author');
+    const authorLink = author.querySelector('a');
+    const authorURL = authorLink.href;
+    const authorName = author.textContent;
+    const authorImg = document.createElement('div');
+    authorImg.classList = 'article-author-image';
+    authorImg.style.backgroundImage = 'url(/blocks/article-header/alexforbes-connector.svg)';
+    author.prepend(authorImg);
+    populateAuthorInfo(authorLink, authorImg, authorURL, authorName, eager);
+  });
+
 }

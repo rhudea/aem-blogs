@@ -533,17 +533,31 @@ function buildArticleHeader(mainEl) {
   const picture = mainEl.querySelector('picture');
   const tags = getMetadata('article:tag', true);
   const category = tags.length > 0 ? tags[0] : '';
-  const author = getMetadata('author');
-  const authorURL = getMetadata('author-url') || `${getRootPath()}/authors/${toClassName(author)}`;
-  const headerInfo = getMetadata('header-info');
+  const authors = getMetadata('authors');
 
+  let authorsDiv = '';
+  if (authors) {
+    authors.split(',').forEach((author) => {
+      const newMetaTag = document.createElement('meta');
+      newMetaTag.setAttribute('name', 'author');
+      newMetaTag.setAttribute('content', author);
+      document.head.append(newMetaTag);
+    });
+
+    getMetadata('author', true).forEach((author) => {
+      const authorURL = `${getRootPath()}/authors/${toClassName(author)}`;
+      authorsDiv = authorsDiv + `<div><a href="${authorURL}">${author}</a></div>`;
+    });
+  }
+
+  const headerInfo = getMetadata('header-info');
   const categoryTag = getLinkForTopic(category);
 
   const articleHeaderBlockEl = buildBlock('article-header', [
     [`<p>${categoryTag}</p>`],
     [h1],
-    [`<p><a href="${authorURL}">${author}</a></p>
-       <p>${headerInfo}</p>`],
+    [`<p>${headerInfo}</p>`],
+    [authorsDiv],
     [{ elems: [picture.closest('p'), getImageCaption(picture)] }],
   ]);
   div.append(articleHeaderBlockEl);

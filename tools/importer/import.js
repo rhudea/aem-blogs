@@ -29,7 +29,7 @@ export default {
         //console.log(articleTagDict);
         const metadata = buildMetadata(document, url);
         const addlMaterials = buildAdditionalMaterials(document);
-        const authorDoc = buildAuthorDoc(document);
+        const authors = buildAuthorDoc(document);
         buildQuotes(document);
         // use helper method to remove header, footer, etc.
         WebImporter.DOMUtils.remove(document.body, [
@@ -65,12 +65,13 @@ export default {
             element: document.body,
             path: '/publish/' + new URL(params.originalURL).pathname.replace(/\/$/, '').replace('/parts', '').replace('/chapters', '').replace('/topics', ''),
         }];
-        if (authorDoc) {
+
+        authors.forEach((authorDoc) => {
             result.push({
                 element: authorDoc[1],
                 path: '/authors/' + authorDoc[0],
             });
-        }
+        });
         return result;
     },
 
@@ -98,21 +99,25 @@ function buildQuotes(document) {
     });
 }
 function buildAuthorDoc(document) {
-    if (document.querySelector('.media--author')) {
-        const authorName = document.querySelector('.media--author__title').innerHTML;
-        const authorImg = document.querySelector('.media--author__img');
-        const div = document.createElement('div');
-        const h1 = document.createElement('h1');
-        h1.innerHTML = authorName;
-        div.append(h1);
-        if (authorImg) {
-            div.append(authorImg);
+    const authors = [];
+    document.querySelectorAll('.content-header__listed-card').forEach((item) => {
+        if (item.querySelector('.media--author')) {
+            const authorName = item.querySelector('.media--author__title').innerHTML.replace(/[^a-zA-Z0-9 ]/g, " ");
+            const authorImg = item.querySelector('.media--author__img');
+            const div = document.createElement('div');
+            const h1 = document.createElement('h1');
+            h1.innerHTML = authorName;
+            div.append(h1);
+            if (authorImg) {
+                div.append(authorImg);
+            }
+            const cells = [['Article Feed']];
+            cells.push(['Author', authorName]);
+            div.append(WebImporter.DOMUtils.createTable(cells, document));
+            authors.push([authorName.toLowerCase().replaceAll(' ', '-'), div]);
         }
-        const cells = [['Article Feed']];
-        cells.push(['Author', authorName]);
-        div.append(WebImporter.DOMUtils.createTable(cells, document));
-        return [authorName.toLowerCase().replaceAll(' ', '-'), div];
-    }
+    });
+    return authors;
 }
 
 function capitalize(sentence) {
@@ -163,8 +168,13 @@ function buildMetadata(document, url) {
         cells.push(['Header Info', capitalize(document.querySelector('.content-header__date-tag').innerHTML)]);
         cells.push(['Publication Date', extractDate(capitalize(document.querySelector('.content-header__date-tag').innerHTML))]);
     }
-    if (document.querySelector('.media--author__title')) {
-        cells.push(['Author', document.querySelector('.media--author__title').innerHTML]);
+    const authorTitles = [];
+    document.querySelectorAll('.media--author__title').forEach((authorTitle) => {
+        authorTitles.push(authorTitle.innerHTML.replaceAll(',', ' '));
+    });
+
+    if (authorTitles.length > 0) {
+        cells.push(['Authors', authorTitles.join()]);
     }
     if (document.querySelector('.content-header__title')) {
         cells.push(['Title', document.querySelector('.content-header__title').innerHTML]);
