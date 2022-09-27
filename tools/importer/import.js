@@ -272,15 +272,17 @@ function buildAdditionalMaterials(document) {
                 href = iframe.getAttribute('src');
             }
         }
-        const size = arc.querySelector('.additional-resource-component__media-type-info').textContent.trim();
-        const classList = arc.querySelector('.additional-resource-component__media-type-info').classList;
-        let mtype;
-        classList.forEach((token) => {
-            if (token.startsWith('mType')) {
-                mtype = token;
-            }
-        })
-        cells.push([[title], [heading], [caption], [href], [size], [mtype]]);
+        if(href) {
+            const size = arc.querySelector('.additional-resource-component__media-type-info').textContent.trim();
+            const classList = arc.querySelector('.additional-resource-component__media-type-info').classList;
+            let mtype;
+            classList.forEach((token) => {
+                if (token.startsWith('mType')) {
+                    mtype = token;
+                }
+            })
+            cells.push([[title], [heading], [caption], [href], [size], [mtype]]);
+        }
     });
     return cells;
 }
@@ -302,6 +304,7 @@ function buildArticleTagsMap() {
         'https://research.alexanderforbes.com/chapters/chapter-action-points-the-role-of-stakeholders-in-building-a-well-being-discourse,Healthcare,Economy',
         'https://research.alexanderforbes.com/chapters/africa,Investments',
         'https://research.alexanderforbes.com/chapters/africa-as-an-integrated-network-of-partnerships,Economy',
+        'https://research.alexanderforbes.com/chapters/chapter-an-action-plan-for-ageing-reform,Healthcare,Retirement',
         'https://research.alexanderforbes.com/chapters/chapter-an-action-plan-for-ageing-reform-2,Healthcare,Retirement',
         'https://research.alexanderforbes.com/parts/asset-allocation,Investments',
         'https://research.alexanderforbes.com/parts/asset-classes,Investments',
@@ -319,12 +322,14 @@ function buildArticleTagsMap() {
         'https://research.alexanderforbes.com/chapters/chapter-building-a-better-annuity-solution,Investments',
         'https://research.alexanderforbes.com/chapters/chapter-holistic-well-being-programmes,Insights,Behavioural finance,Employee Benefits,Financial well-being,Healthcare,Trustees',
         'https://research.alexanderforbes.com/parts/capital-markets-why-do-they-exist,Investments',
+        'https://research.alexanderforbes.com/parts/case-study-on-collaboration,Healthcare,Retrenchment,Economy',
         'https://research.alexanderforbes.com/chapters/chapter-case-study-on-collaboration,Healthcare,Retrenchment,Economy',
         'https://research.alexanderforbes.com/chapters/change-and-accountability,Economy',
         'https://research.alexanderforbes.com/chapters/change-and-inclusion,Economy',
         'https://research.alexanderforbes.com/chapters/chapter-choice,Insights,Behavioural finance,Employee Benefits,Investments',
         'https://research.alexanderforbes.com/chapters/chapter-choice-when-more-can-be-less,Insights,Behavioural finance,Employee Benefits,Trustees,Investments',
         'https://research.alexanderforbes.com/chapters/chapter-collaborating-and-leveraging-for-well-being,Economy',
+        'https://research.alexanderforbes.com/chapters/chapter-collaboration-toolkit,Financial well-being,Retirement,Retrenchment,Economy',
         'https://research.alexanderforbes.com/chapters/chapter-collaboration-toolkit2,Financial well-being,Retirement,Retrenchment,Economy',
         'https://research.alexanderforbes.com/parts/conclusions-and-assumptions,Economy',
         'https://research.alexanderforbes.com/chapters/conflicts-of-interest,Trustees',
@@ -382,6 +387,7 @@ function buildArticleTagsMap() {
         'https://research.alexanderforbes.com/chapters/governance-budgeting,Trustees',
         'https://research.alexanderforbes.com/chapters/chapter-grappling-with-the-conflicts-and-contradictions-that-may-lie-ahead,Insights,Employee Benefits,Trustees,Economy',
         'https://research.alexanderforbes.com/chapters/healthcare-2,Healthcare',
+        'https://research.alexanderforbes.com/chapters/chapter-healthcare-and-resilience-toolkit,Insights,Behavioural finance,Financial well-being,Healthcare,Retirement,Retrenchment',
         'https://research.alexanderforbes.com/chapters/chapter-healthcare-and-resilience-toolkit2,Insights,Behavioural finance,Financial well-being,Healthcare,Retirement,Retrenchment',
         'https://research.alexanderforbes.com/chapters/hedge-funds-and-alternatives,Investments',
         'https://research.alexanderforbes.com/chapters/chapter-high-employee-turnover,Insights,Employee Benefits,Trustees',
@@ -419,6 +425,7 @@ function buildArticleTagsMap() {
         'https://research.alexanderforbes.com/chapters/lifestage-investing,Investments',
         'https://research.alexanderforbes.com/chapters/chapter-living-annuities-living-on-the-fault-line,Trustees',
         'https://research.alexanderforbes.com/chapters/chapter-longevity,Insights,Employee Benefits',
+        'https://research.alexanderforbes.com/parts/part-longevity-the-demographic-disruptor-2,Healthcare,Retirement',
         'https://research.alexanderforbes.com/parts/part-longevity-the-demographic-disruptor9,Healthcare,Retirement',
         'https://research.alexanderforbes.com/chapters/chapter-longevity-why-75-should-be-the-new-65,Trustees,Retirement',
         'https://research.alexanderforbes.com/parts/part-looking-at-the-numbers,Behavioural finance,Financial well-being,Investments',
@@ -450,13 +457,14 @@ function buildArticleTagsMap() {
         'https://research.alexanderforbes.com/chapters/personal-services,Economy',
         'https://research.alexanderforbes.com/chapters/phi-and-why-it-matters,Investments',
         'https://research.alexanderforbes.com/chapters/picking-a-financial-expert,Investments',
+        'https://research.alexanderforbes.com/chapters/chapter-planning-for-a-better-ending,Financial well-being,Retirement',
         'https://research.alexanderforbes.com/chapters/chapter-planning-for-a-better-ending2,Financial well-being,Retirement',
         'https://research.alexanderforbes.com/chapters/politics-and-investing,Investments',
         'https://research.alexanderforbes.com/parts/post-covid-challenges-for-employers,Employee benefits',
         'https://research.alexanderforbes.com/chapters/chapter-product-options,Financial well-being',
         'https://research.alexanderforbes.com/chapters/professional-services,Investments',
         'https://research.alexanderforbes.com/chapters/property-investing,Investments',
-        'https://research.alexanderforbes.com/chapters/chapter-prospects-for-the-retirement-process-in-south-africa-how-are-we-doing-here-2,Healthcare,Trustees,Retirement',
+        'https://research.alexanderforbes.com/chapters/chapter-prospects-for-the-retirement-process-in-south-africa,Healthcare,Trustees,Retirement',
         'https://research.alexanderforbes.com/chapters/public-services,Investments',
         'https://research.alexanderforbes.com/chapters/putting-the-spotlight-on-annuities,Investments',
         'https://research.alexanderforbes.com/chapters/rebalancing,Investments',
@@ -478,9 +486,11 @@ function buildArticleTagsMap() {
         'https://research.alexanderforbes.com/parts/sector-analysis,Investments',
         'https://research.alexanderforbes.com/parts/selecting-an-asset-manager,Investments',
         'https://research.alexanderforbes.com/parts/part-setting-the-scene,Insights,Employee Benefits',
+        'https://research.alexanderforbes.com/chapters/chapter-shifting-sands-families-on-the-move,Financial well-being,Retirement,Economy',
         'https://research.alexanderforbes.com/chapters/chapter-shifting-sands-families-on-the-move-2,Financial well-being,Retirement,Economy',
         'https://research.alexanderforbes.com/parts/should-saving-for-retirement-be-a-top-priority-for-developing-economies,Employee Benefits,Trustees,Investments,Economy',
         'https://research.alexanderforbes.com/chapters/chapter-skills-development-new-approach,Retrenchment',
+        'https://research.alexanderforbes.com/chapters/chapter-skills-income-and-on-going-work-toolkit,Financial well-being,Retrenchment',
         'https://research.alexanderforbes.com/chapters/chapter-skills-income-and-on-going-work-toolkit2,Financial well-being,Retrenchment',
         'https://research.alexanderforbes.com/chapters/chapter-solving-for-smmes-and-sole-proprietors,Economy',
         'https://research.alexanderforbes.com/chapters/chapter-south-africas-skills-development-journey,Economy',
@@ -494,6 +504,7 @@ function buildArticleTagsMap() {
         'https://research.alexanderforbes.com/chapters/chapter-temporary-and-informal-workers-that-benefits-forgot,Insights,Employee Benefits,Trustees,Retrenchment,Economy',
         'https://research.alexanderforbes.com/chapters/chapter-temporary-workers,Trustees,Retrenchment',
         'https://research.alexanderforbes.com/chapters/chapter-the-cost-of-commuting,Financial well-being,Economy',
+        'https://research.alexanderforbes.com/chapters/chapter-the-demographics-of-ageing-in-south-africa-2,Healthcare,Retirement,Economy',
         'https://research.alexanderforbes.com/chapters/chapter-the-demographics-of-ageing-in-south-africa8,Healthcare,Retirement,Economy',
         'https://research.alexanderforbes.com/chapters/chapter-the-diversity-imperative,Economy',
         'https://research.alexanderforbes.com/parts/the-economic-impact-of-retrenchment,Retrenchment',
@@ -546,6 +557,7 @@ function buildArticleTagsMap() {
         'https://research.alexanderforbes.com/parts/what-kind-of-income-does-each-rand-of-savings-buy,Retrenchment',
         'https://research.alexanderforbes.com/chapters/chapter-what-matters-in-the-end,Retirement',
         'https://research.alexanderforbes.com/chapters/chapter-what-video-games-can-teach-business-about-engagement,Insights,Behavioural finance',
+        'https://research.alexanderforbes.com/chapters/chapter-demographic-change-in-south-africa,Retirement,Economy',
         'https://research.alexanderforbes.com/chapters/chapter-what-we-need-to-understand-about-demographic-change-in-south-africa-2,Retirement,Economy',
         'https://research.alexanderforbes.com/chapters/chapter-whats-the-context-the-role-of-culture,Insights,Behavioural finance,Economy',
         'https://research.alexanderforbes.com/chapters/chapter-whats-the-point-making-targets-meaningful-to-members,Insights,Employee Benefits,Trustees,Investments,Retirement',
