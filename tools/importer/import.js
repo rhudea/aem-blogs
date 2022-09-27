@@ -170,11 +170,11 @@ function buildMetadata(document, url) {
     }
     const authorTitles = [];
     document.querySelectorAll('.media--author__title').forEach((authorTitle) => {
-        authorTitles.push(authorTitle.innerHTML.replace(/[^a-zA-Z0-9 ]/g, ""));
+        authorTitles.push(authorTitle.innerHTML.replaceAll(',', ' '));
     });
 
     if (authorTitles.length > 0) {
-        cells.push(['Author', authorTitles.join()]);
+        cells.push(['Authors', authorTitles.join()]);
     }
     if (document.querySelector('.content-header__title')) {
         cells.push(['Title', document.querySelector('.content-header__title').innerHTML]);

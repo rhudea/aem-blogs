@@ -533,10 +533,18 @@ function buildArticleHeader(mainEl) {
   const picture = mainEl.querySelector('picture');
   const tags = getMetadata('article:tag', true);
   const category = tags.length > 0 ? tags[0] : '';
-  const authors = getMetadata('author') ? getMetadata('author').split(', ') : [];
+  const authors = getMetadata('authors');
+
   let authorsDiv = '';
-  if (authors !== undefined) {
-    authors.forEach((author) => {
+  if (authors) {
+    authors.split(',').forEach((author) => {
+      const newMetaTag = document.createElement('meta');
+      newMetaTag.setAttribute('name', 'author');
+      newMetaTag.setAttribute('content', author);
+      document.head.append(newMetaTag);
+    });
+
+    getMetadata('author', true).forEach((author) => {
       const authorURL = `${getRootPath()}/authors/${toClassName(author)}`;
       authorsDiv = authorsDiv + `<div><a href="${authorURL}">${author}</a></div>`;
     });
