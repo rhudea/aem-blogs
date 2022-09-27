@@ -12,7 +12,7 @@ indices:
     properties:
       author:
         select: head > meta[name="author"]
-        value: |
+        values: |
           attribute(el, 'content')
       title:
         select: main h1:first-of-type
