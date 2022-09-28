@@ -11,9 +11,9 @@ indices:
     target: /query-index.xlsx
     properties:
       author:
-        select: head > meta[name="author"]
+        select: head > meta[name="authors"]
         values: |
-          attribute(el, 'content')
+          match(attribute(el, 'content'), ' ?([^,]+)')
       title:
         select: main h1:first-of-type
         value: |
