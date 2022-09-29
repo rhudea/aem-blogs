@@ -12,10 +12,10 @@
   --color-gray-700: #444;
   --color-gray-800: #242424;
   --color-black: #000;
-  --color-brand-title: #000B1D;
-  --color-info-accent: #5C5CE0;
-  --color-info-accent-hover: #4646C6;
-  --color-info-accent-down: #3D3DB4;
+  --color-brand-title: #124e57;
+  --color-info-accent: #f15A22;
+  --color-info-accent-hover: #f69521;
+  --color-info-accent-down: #15808d;
   --color-info-accent-light: #DEDEF9;
 
   /* body */
@@ -155,24 +155,24 @@ a.button.light:hover, a.button.light:focus {
 }
 
 a.button.primary.light:any-link {
-  color: var(--color-gray-700);
-  border-color: var(--color-gray-700);
+  color: var(--color-info-accent);
+  border-color: var(--color-info-accent);
 }
 
 a.button.primary.light:hover, a.button.primary.light:focus {
-  background-color: var(--color-gray-800);
-  border-color: var(--color-gray-800);
+  background-color: var(--color-info-accent-hover);
+  border-color: var(--info-accent-hover);
   color: var(--color-white);
 }
 
 a.button.secondary.light:any-link {
-  color: var(--color-gray-600);
-  border-color: var(--color-gray-600);
+  color: var(--color-info-accent);
+  border-color: var(--color-info-accent);
 }
 
 a.button.secondary.light:hover, a.button.secondary.light:focus {
-  background-color: var(--color-gray-700);
-  border-color: var(--color-gray-700);
+  background-color: var(--color-info-accent-hover);
+  border-color: var(--color-info-accent-hover);
   color: var(--color-white);
 }
 
