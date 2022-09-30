@@ -9,7 +9,7 @@ header .gnav {
   height: 64px;
   display: flex;
   opacity: .98;
-  /* border-bottom: 1px solid #124e57; */
+  border-bottom: 1px solid #124e57;
 }
 
 .gnav {
