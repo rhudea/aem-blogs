@@ -27,7 +27,7 @@ header .gnav {
 }
 
 .gnav a {
-  color: #f15a22;
+  color: #0b1727;
   text-decoration: none;
 }
 
@@ -317,7 +317,7 @@ button.gnav-toggle:after {
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(12,50,56,0.75);
+  background: rgba(11,23,39,0.75);
   -webkit-backdrop-filter: blur(1em);
   backdrop-filter: blur(1em);
 }
@@ -430,7 +430,7 @@ button.gnav-toggle:after {
   bottom: 0;
   left: -4px;
   right: -4px;
-  background-color: rgba(255, 208, 0, 0.3);
+  background-color: rgba(241, 215, 175, 0.8);
   border-radius: 4px;
 }
 
