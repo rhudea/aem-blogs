@@ -94,7 +94,7 @@ main p.featured-article-card-category,
 main p.featured-article-card-category a,
 main p.featured-article-card-date {
   font-weight: var(--detail-font-weight);
-  color: var(--detail-color);
+  color: var(--color-brand-title);
   font-size: var(--detail-font-size-s);
   line-height: var(--detail-line-height);
   text-transform: uppercase;
@@ -105,6 +105,7 @@ main p.featured-article-card-date {
 main .featured-article-card-body h3 {
   font-size: var(--heading-font-size-m);
   line-height: var(--heading-line-height);
+  color: var(--color-info-accent-down)
   margin: 0;
   margin-bottom: 1rem;
   overflow: hidden;
@@ -114,6 +115,7 @@ main .featured-article-card-body h3 {
 @media (min-width: 600px) {
   main .featured-article-card-body h3 {
     font-size: var(--heading-font-size-xl);
+    color: var(--color-info-accent-down);
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;

@@ -104,11 +104,15 @@ main a.article-card:any-link {
   padding-right: 0;
 }
 
+.article-card .article-card-body h3 {
+color: var(--color-info-accent-down);
+}
+
 .article-card-body p.article-card-category,
 .article-card-body p.article-card-category a,
 .article-card-body p.article-card-date {
   font-weight: var(--detail-font-weight);
-  color: var(--detail-color);
+  color: var(--color-brand-title);
   font-size: var(--detail-font-size-s);
   line-height: var(--detail-line-height);
   text-transform: uppercase;

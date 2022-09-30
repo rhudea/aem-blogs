@@ -12,16 +12,16 @@
   --color-gray-700: #444;
   --color-gray-800: #242424;
   --color-black: #000;
-  --color-brand-title: #000B1D;
-  --color-info-accent: #5C5CE0;
-  --color-info-accent-hover: #4646C6;
-  --color-info-accent-down: #3D3DB4;
+  --color-brand-title: #124e57;
+  --color-info-accent: #f15A22;
+  --color-info-accent-hover: #f69521;
+  --color-info-accent-down: #15808d;
   --color-info-accent-light: #DEDEF9;
 
   /* body */
   --body-background-color: var(--color-white);
   --body-alt-background-color: var(--color-gray-600);
-  --body-font-family: "Source Sans Pro",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+  --body-font-family: "New Hero",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
   --body-font-weight: 400;
   --body-color: var(--color-black);
   --body-line-height: 1.5;
@@ -155,24 +155,24 @@ a.button.light:hover, a.button.light:focus {
 }
 
 a.button.primary.light:any-link {
-  color: var(--color-gray-700);
-  border-color: var(--color-gray-700);
+  color: var(--color-info-accent);
+  border-color: var(--color-info-accent);
 }
 
 a.button.primary.light:hover, a.button.primary.light:focus {
-  background-color: var(--color-gray-800);
-  border-color: var(--color-gray-800);
+  background-color: var(--color-info-accent-hover);
+  border-color: var(--info-accent-hover);
   color: var(--color-white);
 }
 
 a.button.secondary.light:any-link {
-  color: var(--color-gray-600);
-  border-color: var(--color-gray-600);
+  color: var(--color-info-accent);
+  border-color: var(--color-info-accent);
 }
 
 a.button.secondary.light:hover, a.button.secondary.light:focus {
-  background-color: var(--color-gray-700);
-  border-color: var(--color-gray-700);
+  background-color: var(--color-info-accent-hover);
+  border-color: var(--color-info-accent-hover);
   color: var(--color-white);
 }
 
@@ -233,7 +233,7 @@ main h5, main h6 {
 
 @media (min-width:600px) {
   main {
-    font-size: var(--body-font-size-l);
+    font-size: var(--body-font-size-m);
   }
 
   main h2 {
