@@ -233,7 +233,7 @@ main h5, main h6 {
 
 @media (min-width:600px) {
   main {
-    font-size: var(--body-font-size-l);
+    font-size: var(--body-font-size-m);
   }
 
   main h2 {
