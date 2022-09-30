@@ -156,30 +156,32 @@ main .article-authors .article-social-sharing a {
 main .article-authors .article-social-sharing svg {
   height: 22px;
   width: 22px;
+  fill: var(--color-brand-title);
 }
 
 main .article-authors .article-social-sharing a[data-href*="twitter"]:hover svg,
 main .article-authors .article-social-sharing a[data-href*="twitter"]:focus svg {
-  fill: #1DA1F2;
+  fill: var(--color-info-accent);
 }
 
 main .article-authors .article-social-sharing a[data-href*="linkedin"]:hover svg,
 main .article-authors .article-social-sharing a[data-href*="linkedin"]:focus svg {
-  fill: #0077b5;
+  fill: var(--color-info-accent);
 }
 
 main .article-authors .article-social-sharing a[data-href*="facebook"]:hover svg,
 main .article-authors .article-social-sharing a[data-href*="facebook"]:focus svg {
-  fill: #3b5998;
+  fill: var(--color-info-accent);
 }
 
 main .article-authors .article-social-sharing a#copy-to-clipboard {
   position: relative;
+  fill: var(--color-info-accent);
 }
 
 main .article-authors .article-social-sharing a#copy-to-clipboard:hover svg,
 main .article-authors .article-social-sharing a#copy-to-clipboard:focus svg {
-  fill: var(--color-info-accent-hover);
+  fill: var(--color-info-accent);
 }
 
 main .article-authors .article-social-sharing a#copy-to-clipboard.copy-success {
