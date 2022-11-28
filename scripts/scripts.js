@@ -19,7 +19,7 @@ import {
 const PRODUCTION_DOMAINS = ['blog.alexforbes.com'];
 let taxonomy;
 
-const LCP_BLOCKS = []; // add your LCP blocks to the list
+const LCP_BLOCKS = ['featured-article', 'article-header']; // add your LCP blocks to the list
 window.hlx.RUM_GENERATION = 'project-1'; // add your RUM generation information here
 
 function buildHeroBlock(main) {
