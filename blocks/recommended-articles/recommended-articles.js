@@ -1,7 +1,11 @@
 import {
+  //fetchPlaceholders
+} from '../../scripts/lib-franklin.js';
+
+import {
   buildArticleCard,
-  getBlogArticle,
   fetchPlaceholders,
+  getBlogArticle
 } from '../../scripts/scripts.js';
 
 async function decorateRecommendedArticles(recommendedArticlesEl, paths) {

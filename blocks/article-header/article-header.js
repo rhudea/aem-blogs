@@ -1,8 +1,13 @@
 import {
-  buildFigure,
   createOptimizedPicture,
-  getMetadata,
+  //fetchPlaceholders
+} from '../../scripts/lib-franklin.js';
+
+
+import {
+  buildFigure,
   fetchPlaceholders,
+  getMetadata
 } from '../../scripts/scripts.js';
 
 import {
