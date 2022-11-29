@@ -84,6 +84,11 @@ body {
   color: var(--body-color);
   margin: 0;
   padding: 0;
+  display: none;
+}
+
+body.appear {
+  display: unset;
 }
 
 /* buttons */
@@ -278,6 +283,8 @@ main a.cta-link:focus {
 main img,
 main video {
   max-width: 100%;
+  width: auto;
+  height: auto;
 }
 
 /* section wrapper */
