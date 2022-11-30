@@ -37,13 +37,27 @@ function buildHeroBlock(main) {
  * Decorates the main element.
  * @param {Element} main The main element
  */
+ function decoratePictures(main) {
+  main.querySelectorAll('img[src*="/media_"]').forEach((img, i) => {
+    const newPicture = createOptimizedPicture(img.src, img.alt, !i);
+    const picture = img.closest('picture');
+    if (picture) picture.parentElement.replaceChild(newPicture, picture);
+  });
+}
+
+/**
+ * Decorates the main element.
+ * @param {Element} main The main element
+ */
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
   // hopefully forward compatible button decoration
   //decorateButtons(main);
+  decoratePictures(main);
   makeLinksRelative(main);
-  decorateIcons(main);
+  //decorateIcons(main);
   buildAutoBlocks(main);
+  removeEmptySections();
   decorateSections(main);
   decorateBlocks(main);
 }
@@ -662,6 +676,13 @@ function splitSections() {
     }
   });
 }
+
+function removeEmptySections() {
+  document.querySelectorAll('main > div:empty').forEach((div) => {
+    div.remove();
+  });
+}
+
 
 /**
  * Build figcaption element
