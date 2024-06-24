@@ -1,11 +1,15 @@
 import {
   readBlockConfig,
+  //fetchPlaceholders,
+  sampleRUM
+} from '../../scripts/lib-franklin.js';
+
+import {
   buildArticleCard,
   fetchBlogArticleIndex,
   fetchPlaceholders,
   getArticleTaxonomy,
-  getTaxonomy,
-  sampleRUM,
+  getTaxonomy
 } from '../../scripts/scripts.js';
 
 function isCardOnPage(article) {

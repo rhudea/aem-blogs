@@ -1,5 +1,8 @@
 import {
-  fetchBlogArticleIndex, createOptimizedPicture, getArticleTaxonomy, sampleRUM,
+  createOptimizedPicture, sampleRUM
+} from '../../scripts/lib-franklin.js';
+import {
+  fetchBlogArticleIndex, getArticleTaxonomy
 } from '../../scripts/scripts.js';
 import { createTag } from '../block-helpers.js';
 
